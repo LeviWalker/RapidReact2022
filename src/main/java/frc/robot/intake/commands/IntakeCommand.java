@@ -1,7 +1,5 @@
 package frc.robot.intake.commands;
 
-import java.lang.reflect.Executable;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.OIConstants;
@@ -27,6 +25,6 @@ public class IntakeCommand extends CommandBase {
         else if (Math.abs(intakeAxis) < 0.07 && intake.isDeployed())
             intake.retract();
         
-        intake.setIntake(-intakeAxis);
+        intake.setIntake(intakeAxis);
     }
 }

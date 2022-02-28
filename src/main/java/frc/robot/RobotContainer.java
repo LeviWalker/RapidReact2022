@@ -1,22 +1,26 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PS4Controller;
-import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
+import frc.robot.intake.Intake;
+import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.shooter.Shooter;
 import frc.robot.shooter.commands.SpinUpShooter;
 import frc.robot.shooter.commands.StopShooter;
-import frc.robot.util.oi.NKPS4Controller;
 
 public class RobotContainer {
     Shooter shooter;
+    Intake intake;
     Joystick driver, operator;
     JoystickButton driverCircle, driverTriangle, driverSquare, driverX;
 
     public RobotContainer() {
         shooter = new Shooter();
+    }
+
+    public void teleopInit() {
+        new IntakeCommand(intake, operator).schedule();
     }
 
     public void configureButtonBindings() {

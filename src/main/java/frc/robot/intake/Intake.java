@@ -36,5 +36,9 @@ public class Intake extends SubsystemBase {
     public void retract() {
         deployer.set(Value.kReverse);
     }
+
+    public boolean isIntaking() {
+        return intake.get() > 0;
+    }
     
 }
