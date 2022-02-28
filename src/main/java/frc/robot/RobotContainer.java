@@ -3,6 +3,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
+import frc.robot.drive.Drivetrain;
+import frc.robot.drive.commands.JoystickDrive;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.shooter.Shooter;
@@ -10,13 +12,20 @@ import frc.robot.shooter.commands.SpinUpShooter;
 import frc.robot.shooter.commands.StopShooter;
 
 public class RobotContainer {
+    Drivetrain drivetrain;
     Shooter shooter;
     Intake intake;
     Joystick driver, operator;
     JoystickButton driverCircle, driverTriangle, driverSquare, driverX;
 
     public RobotContainer() {
+        configureButtonBindings();
+
+        drivetrain = new Drivetrain();
         shooter = new Shooter();
+        intake = new Intake();
+
+        drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, driver));
     }
 
     public void teleopInit() {

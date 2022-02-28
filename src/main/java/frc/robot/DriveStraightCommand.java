@@ -1,12 +1,13 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.drive.Drivetrain;
 
 public class DriveStraightCommand extends WaitCommand {
 
-    DrivetrainSubsystem drive;
+    Drivetrain drive;
 
-    public DriveStraightCommand(DrivetrainSubsystem drive) {
+    public DriveStraightCommand(Drivetrain drive) {
         super(3);
         this.drive = drive;
     }

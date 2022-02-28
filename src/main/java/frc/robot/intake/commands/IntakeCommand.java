@@ -15,6 +15,7 @@ public class IntakeCommand extends CommandBase {
     public IntakeCommand(Intake intake, Joystick operator) {
         this.intake = intake;
         this.operator = operator;
+        addRequirements(intake);
     }
 
     @Override
