@@ -45,4 +45,32 @@ public class Constants {
         public static final int leftTriggerPS4 = 3;
         public static final int rightTriggerPS4 = 4;
     }
+
+    public static class VisionConstants {
+
+        // Vision Client information
+
+        /**
+         * TCP port the vision is hosted on
+         */
+        public static final short kVisionPort = 5050;
+
+        /**
+         * Identifier for the Vision Raspberry Pi
+         */
+        public static final String kVisionIPAddress = "pi@wpilibpi";
+
+
+        // Data value indexes
+
+        /**
+         * Index of the distance value from the vision server
+         */
+        public static final byte kDistanceIndex = 0;
+
+        /**
+         * Index of the angle value from the vision server
+         */
+        public static final byte kAngleIndex = 1;
+    }
 }
