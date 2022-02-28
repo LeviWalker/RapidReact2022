@@ -43,7 +43,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.util.sysid.CharacterizeDrive;
 import frc.robot.util.vision.VisionClient;
 import frc.robot.util.vision.VisionClient.VisionClientException;
-import frc.robot.shooter.Shooter;
 import frc.robot.util.control.*;
 import frc.robot.util.oi.NKPS4Controller;
 import frc.robot.util.tunable.NKSmartNumber;
@@ -52,10 +51,6 @@ import frc.robot.util.tunable.NKSmartBoolean;
 
 
 public class Robot extends TimedRobot {
-
-  DrivetrainSubsystem drive = new DrivetrainSubsystem();
-  Shooter shooter = new Shooter();
-  Climber climber = new Climber();
 
   NKPS4Controller driver, operator;
 
@@ -75,7 +70,7 @@ public class Robot extends TimedRobot {
   double climbPower = 0.50;
   boolean out = false;
 
-  NKVictorSPX m9, m10;
+  NKVictorSPX m10;
 
   Servo lServo, rServo, testServo;
 
@@ -90,8 +85,6 @@ public class Robot extends TimedRobot {
 
   NKDoubleSolenoid intake;
   NKSolenoid gear;
-
-  RobotContainer robotContainer;
 
   // private final double kClimbP = 0.00256640574875;
 
@@ -134,30 +127,20 @@ public class Robot extends TimedRobot {
 
     intake = new NKDoubleSolenoid(41, PneumaticsModuleType.REVPH, 2, 3);
 
-    gear = new NKSolenoid(41, PneumaticsModuleType.REVPH, 4);
+    // gear = new NKSolenoid(41, PneumaticsModuleType.REVPH, 4);
 
-    lServo = new Servo(0);
-    rServo = new Servo(1);
-
-    m7 = new NKTalonFX(7); // flywheel
-
-    m9 = new NKVictorSPX(9); // intake
-    SmartDashboard.putNumber("intakeSpeed", intakePower);
+    // lServo = new Servo(0);
+    // rServo = new Servo(1);
 
     m10 = new NKVictorSPX(10); // transfer
 
     // SmartDashboard.putBoolean("intake", intake.get() == Value.kForward);
     SmartDashboard.putBoolean("high gear", gear.get());
-
-    robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-
-    SmartDashboard.putNumber("left pos", drive.getLeftEncoderDistanceMeters());
-    SmartDashboard.putNumber("right pos", drive.getRightEncoderDistanceMeters());
 
     double smartDashIntakeSpeed = SmartDashboard.getNumber("intakeSpeed", intakePower);
 
@@ -195,130 +178,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {}
 
-  // public double kFP = 0.000017, kFI = 0.000001, kFD = 0, kFF;
-  public double kFP = 0.13, kFI = 0, kFD = 0, kFF = 0.0471;
-  public int kFIZ = 21777;
-
-  public double flywheelError, cummFlyError, lastFlyError;
-
-
   @Override
   public void teleopPeriodic() {
-
-    // boolean intakeDeploy = SmartDashboard.getBoolean("intake", false);
-    // intake.set(intakeDeploy? Value.kForward : Value.kReverse);
-
-    double newRPM = SmartDashboard.getNumber("target rpm", targetRPM);
-
-    if (targetRPM != newRPM) {
-      targetRPM = newRPM;
-    }
-
-    double targetClimbPosition = SmartDashboard.getNumber("target climb position", climber.getTargetPosition());
-
-    if (climber.getTargetPosition() != targetClimbPosition) {
-      climber.setTargetPosition(targetClimbPosition);
-    }
-
-    final double kDumpShot = 3000;
-
-    // shooting for week 0
-
-    // if (operator.getTriangleButton() && Math.abs(kDumpShot) > 500) shooter.setFlywheelTargetRPM(kDumpShot);
-    // else shooter.setFlywheelTargetRPM(0);
-
-    if (operator.getTriangleButtonPressed()) {
-      shooter.setHood(true);
-    }
-
-    // share -> move transfer
-    // right y - intake
-    // triangle -> go to target rpm
-
-    SmartDashboard.putNumber("fp", kFP);
-    SmartDashboard.putNumber("fi", kFI);
-    SmartDashboard.putNumber("fd", kFD);
-    SmartDashboard.putNumber("ff", kFF);
-    SmartDashboard.putNumber("fiz", kFIZ);
-
-    // if (driver.getCircleButtonPressed()) {
-    //   out = !out;
-    //   // lServo.setAngle(out? 90 : 60);
-    //   System.out.println("changing servo position, neutral = " + out);
-    // }
-
-    if (out) {
-      lServo.setAngle(50);
-      rServo.setAngle(130);
-    } else {
-      lServo.setAngle(90);
-      rServo.setAngle(90);
-    }
-
-    // if (driver.getSquareButtonPressed()) {
-    //   kNewOut += 5;
-    //   System.out.println("new Out = " + kNewOut);
-    // } else if (driver.getTriangleButtonPressed()) {
-    //   kNewOut -= 5;
-    //   System.out.println("new Out = " + kNewOut);
-    // }
-
-    // if (driver.getR1ButtonPressed()) { 
-    //   kNewIn += 5;
-    //   System.out.println("new kNewIn = " + kNewIn);
-    // } else if (driver.getL1ButtonPressed()) {
-    //   kNewIn -= 5;
-    //   System.out.println("new kNewIn = " + kNewIn);
-    // }
-
-    // if (out) {
-    //   servo.setRaw((int) kNewOut);
-    // } else {
-    //   servo.setRaw((int) kNewIn);
-    // }
-
-    // if (out) {
-    //     rServo.setRaw((int) kNewOut);
-    //   } else {
-    //     rServo.setRaw((int) kNewIn);
-    //   }
-
-    // System.out.println("servo angle: " + rServo.getAngle() + ", servo get: " + rServo.get() + ", servo neutral = " + out);
-  
-
-    double throttle = maxThrottle * (driver.getRightTrigger() - driver.getLeftTrigger());
-    double turn = maxTurn * driver.getLeftX();
-    drive.curveDrive(throttle, turn);
-
-    if (driver.getSquareButtonPressed()) gear.set(!gear.get());
-
-    // if (driver != null && driver.getSquareButtonPressed()) {
-    //   flywheelPower -= 0.05;
-    //   System.out.println(">>>>>>>>>>>> Current Power: " + flywheelPower);
-    // }
-    // if (driver != null && driver.getTriangleButtonPressed()) {
-    //   flywheelPower += 0.05;
-    //   System.out.println(">>>>>>>>>>>> Current Power: " + flywheelPower);
-    // }
-    // if (driver.getOptionsButtonPressed()) {
-    //   flywheelPower += 0.01;
-    //   System.out.println(">>>>>>>>>>>> Current Power: " + flywheelPower);
-    // }
-
-    double intakeAxis = -operator.getRightY();
-    double iSpeed = 0;
-    if (Math.abs(intakeAxis) > 0.07) {
-      iSpeed = (intakeAxis > 0)?
-        MathUtil.clamp(intakeAxis, 0.25, 0.60) : MathUtil.clamp(intakeAxis, -0.60, -0.25);
-      if (Math.abs(intakeAxis) > 0.05 && intake.get() != Value.kForward) intake.set(Value.kForward);
-    }
-    m9.set(iSpeed);
-
-    if (Math.abs(intakeAxis) < 0.05 && intake.get() == Value.kForward) intake.set(Value.kReverse);
-
-    if (Math.abs(iSpeed) > 0.05 && !shooter.hasCargo()) m10.set(transferPower);
-    else if (operator.getShareButton()) m10.set(transferPower);
-    else m10.set(0);
 
   }
 
