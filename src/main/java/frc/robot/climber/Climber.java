@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.climber;
 
 import javax.swing.plaf.basic.BasicBorders.SplitPaneBorder;
 
