@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.trajectory.*;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,10 +19,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.util.control.NKSolenoid;
 import frc.robot.util.control.NKTalonFX;
 
 public class Drivetrain extends SubsystemBase {
 
+  private NKSolenoid gear;
   private NKTalonFX leftMaster, leftFront, leftRear;
   private NKTalonFX rightMaster, rightFront, rightRear;
 
@@ -36,6 +40,8 @@ public class Drivetrain extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public Drivetrain() {
+
+    gear = new NKSolenoid(41, PneumaticsModuleType.REVPH, 4);
 
     leftMaster = new NKTalonFX(DriveConstants.kLeftMotor1Port);
     rightMaster = new NKTalonFX(DriveConstants.kRightMotor1Port);
@@ -82,6 +88,14 @@ public class Drivetrain extends SubsystemBase {
     m_odometry = new DifferentialDriveOdometry(imu.getRotation2d());
 
     SmartDashboard.putNumber("kDriveStraightP", kDriveStraightP);
+  }
+
+  public void setHighGear(boolean highGear) {
+    gear.set(highGear);
+  }
+
+  public void toggleGear() {
+    gear.set(!gear.get());
   }
 
   public DifferentialDrive getDifferentialDrive() {
@@ -254,34 +268,7 @@ public class Drivetrain extends SubsystemBase {
     return this.rightMaster.getVelocityRPM() * DriveConstants.kRotationsToMetersConversion / 60;
   }
 
-  public static class DriveConstants {
 
-    public static final int kLeftMotor1Port = 4;
-    public static final int kLeftMotor2Port = 5;
-    public static final int kLeftMotor3Port = 6;
-    public static final int kRightMotor1Port = 1;
-    public static final int kRightMotor2Port = 2;
-    public static final int kRightMotor3Port = 3;
-
-    // how much faster are the drive wheels going than the motors?
-    public static final double kGearRatio = 9.07; // 16.91; // low gear
-    public static final double kWheelDiameterInches = 6;
-    public static final double kInchesToMeters = 0.0254;
-    public static final double kRotationsToMetersConversion = Math.PI * kWheelDiameterInches * kInchesToMeters / kGearRatio;
-
-    public static final double kTrackWidthMeters = 0; // TODO Find out with SysId?
-    public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidthMeters);
-    public static final double kMaxSpeedMetersPerSecond = 0; // TODO math // jvn
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0; // TODO math // jvn
-
-    public static final double ksVolts = 0; // TODO sys id
-    public static final double kvVoltSecondsPerMeter = 0; // TODO sys id
-    public static final double kaVoltSecondsSquaredPerMeter = 0; // TODO sys id
-    public static final double kRamseteB = 2;
-    public static final double kRamseteZeta = 0.7;
-    public static final double kPDriveVel = 0; // TODO sys id
-      
-  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

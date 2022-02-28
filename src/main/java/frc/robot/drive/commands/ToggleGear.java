@@ -5,21 +5,17 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.OIConstants;
 import frc.robot.drive.Drivetrain;
 
-public class JoystickDrive extends CommandBase {
+public class ToggleGear extends CommandBase {
     Drivetrain drivetrain;
-    Joystick driver;
 
-    public JoystickDrive(Drivetrain drivetrain, Joystick driver) {
+    public ToggleGear(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
-        this.driver = driver;
         addRequirements(drivetrain);
     }
 
     @Override
-    public void execute() {
-        drivetrain.curveDrive(driver.getRawAxis(OIConstants.rightTriggerPS4) - 
-                            driver.getRawAxis(OIConstants.leftTriggerPS4), 
-                            driver.getRawAxis(5));
+    public void initialize() {
+        drivetrain.toggleGear();
     }
 
     @Override

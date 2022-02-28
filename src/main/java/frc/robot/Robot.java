@@ -25,7 +25,6 @@ import frc.robot.util.control.NKDoubleSolenoid;
 import frc.robot.util.control.NKSolenoid;
 import frc.robot.util.control.NKTalonFX;
 import frc.robot.util.control.NKVictorSPX;
-import frc.robot.util.oi.NKPS4Controller;
 import frc.robot.util.tunable.NKSmartNumber;
 import frc.robot.util.vision.VisionClient;
 
@@ -35,8 +34,6 @@ public class Robot extends TimedRobot {
   Drivetrain drive = new Drivetrain();
   Shooter shooter = new Shooter();
   Climber climber = new Climber();
-
-  NKPS4Controller driver, operator;
 
   Compressor compressor;
 
@@ -104,9 +101,6 @@ public class Robot extends TimedRobot {
     //   ColorSensorMeasurementRate.kColorRate25ms,
     //   GainFactor.kGain1x
     // );
-
-    driver = new NKPS4Controller(0);
-    operator = new NKPS4Controller(1);
 
     compressor = new Compressor(41, PneumaticsModuleType.REVPH);
     compressor.enableDigital();
@@ -206,10 +200,6 @@ public class Robot extends TimedRobot {
     // if (operator.getTriangleButton() && Math.abs(kDumpShot) > 500) shooter.setFlywheelTargetRPM(kDumpShot);
     // else shooter.setFlywheelTargetRPM(0);
 
-    if (operator.getTriangleButtonPressed()) {
-      shooter.setHood(true);
-    }
-
     // share -> move transfer
     // right y - intake
     // triangle -> go to target rpm
@@ -263,42 +253,6 @@ public class Robot extends TimedRobot {
     //   }
 
     // System.out.println("servo angle: " + rServo.getAngle() + ", servo get: " + rServo.get() + ", servo neutral = " + out);
-  
-
-    double throttle = maxThrottle * (driver.getRightTrigger() - driver.getLeftTrigger());
-    double turn = maxTurn * driver.getLeftX();
-    drive.curveDrive(throttle, turn);
-
-    if (driver.getSquareButtonPressed()) gear.set(!gear.get());
-
-    // if (driver != null && driver.getSquareButtonPressed()) {
-    //   flywheelPower -= 0.05;
-    //   System.out.println(">>>>>>>>>>>> Current Power: " + flywheelPower);
-    // }
-    // if (driver != null && driver.getTriangleButtonPressed()) {
-    //   flywheelPower += 0.05;
-    //   System.out.println(">>>>>>>>>>>> Current Power: " + flywheelPower);
-    // }
-    // if (driver.getOptionsButtonPressed()) {
-    //   flywheelPower += 0.01;
-    //   System.out.println(">>>>>>>>>>>> Current Power: " + flywheelPower);
-    // }
-
-    double intakeAxis = -operator.getRightY();
-    double iSpeed = 0;
-    if (Math.abs(intakeAxis) > 0.07) {
-      iSpeed = (intakeAxis > 0)?
-        MathUtil.clamp(intakeAxis, 0.25, 0.60) : MathUtil.clamp(intakeAxis, -0.60, -0.25);
-      if (Math.abs(intakeAxis) > 0.05 && intake.get() != Value.kForward) intake.set(Value.kForward);
-    }
-    m9.set(iSpeed);
-
-    if (Math.abs(intakeAxis) < 0.05 && intake.get() == Value.kForward) intake.set(Value.kReverse);
-
-    if (Math.abs(iSpeed) > 0.05 && !shooter.hasCargo()) m10.set(transferPower);
-    else if (operator.getShareButton()) m10.set(transferPower);
-    else m10.set(0);
-
   }
 
   @Override
