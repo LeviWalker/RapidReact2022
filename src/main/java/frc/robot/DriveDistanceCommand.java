@@ -3,10 +3,11 @@ package frc.robot;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.drive.Drivetrain;
 
 public class DriveDistanceCommand extends CommandBase {
 
-    DrivetrainSubsystem drive;
+    Drivetrain drive;
 
     PIDController leftDistanceController, rightDistanceController, headingController;
 
@@ -24,7 +25,7 @@ public class DriveDistanceCommand extends CommandBase {
 
     boolean runMotors;
 
-    public DriveDistanceCommand(DrivetrainSubsystem drive, double meters) {
+    public DriveDistanceCommand(Drivetrain drive, double meters) {
 
         this.target = meters;
 

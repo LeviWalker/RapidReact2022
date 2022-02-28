@@ -4,56 +4,35 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.revrobotics.ColorSensorV3.ColorSensorMeasurementRate;
-import com.revrobotics.ColorSensorV3.ColorSensorResolution;
-import com.revrobotics.ColorSensorV3.GainFactor;
-import com.revrobotics.SparkMaxRelativeEncoder.Type;
-
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorMatch;
-import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.I2C.Port;
-import edu.wpi.first.wpilibj.PWM.PeriodMultiplier;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.util.sysid.CharacterizeDrive;
-import frc.robot.util.vision.VisionClient;
-import frc.robot.util.vision.VisionClient.VisionClientException;
+import frc.robot.climber.Climber;
+import frc.robot.drive.Drivetrain;
 import frc.robot.shooter.Shooter;
-import frc.robot.util.control.*;
+import frc.robot.util.control.NKDoubleSolenoid;
+import frc.robot.util.control.NKSolenoid;
+import frc.robot.util.control.NKTalonFX;
+import frc.robot.util.control.NKVictorSPX;
 import frc.robot.util.oi.NKPS4Controller;
 import frc.robot.util.tunable.NKSmartNumber;
-import frc.robot.util.tunable.Tunable;
-import frc.robot.util.tunable.NKSmartBoolean;
+import frc.robot.util.vision.VisionClient;
 
 
 public class Robot extends TimedRobot {
 
-  DrivetrainSubsystem drive = new DrivetrainSubsystem();
+  Drivetrain drive = new Drivetrain();
   Shooter shooter = new Shooter();
   Climber climber = new Climber();
 

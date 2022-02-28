@@ -2,15 +2,15 @@ package frc.robot.util.sysid;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.DrivetrainSubsystem;
+import frc.robot.drive.Drivetrain;
 
 public class CharacterizeDrive extends CommandBase {
-    private final DrivetrainSubsystem m_drivebase;
+    private final Drivetrain m_drivebase;
     private SysIdDrivetrainLogger m_logger;   
     private Double m_prevAngle = 0.0;
     private Double m_prevTime = 0.0;
     private boolean m_resetComplete;
-    public CharacterizeDrive(DrivetrainSubsystem subsystem) {
+    public CharacterizeDrive(Drivetrain subsystem) {
 
         m_drivebase = subsystem;
         addRequirements(m_drivebase);   

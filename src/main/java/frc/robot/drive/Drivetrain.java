@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.drive;
 
 import java.util.List;
 
@@ -17,9 +17,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.util.control.NKTalonFX;
 
-public class DrivetrainSubsystem extends SubsystemBase {
+public class Drivetrain extends SubsystemBase {
 
   private NKTalonFX leftMaster, leftFront, leftRear;
   private NKTalonFX rightMaster, rightFront, rightRear;
@@ -34,7 +35,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private final DifferentialDriveOdometry m_odometry;
 
   /** Creates a new DriveSubsystem. */
-  public DrivetrainSubsystem() {
+  public Drivetrain() {
 
     leftMaster = new NKTalonFX(DriveConstants.kLeftMotor1Port);
     rightMaster = new NKTalonFX(DriveConstants.kRightMotor1Port);
