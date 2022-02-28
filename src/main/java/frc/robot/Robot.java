@@ -43,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.util.sysid.CharacterizeDrive;
 import frc.robot.util.vision.VisionClient;
 import frc.robot.util.vision.VisionClient.VisionClientException;
+import frc.robot.shooter.Shooter;
 import frc.robot.util.control.*;
 import frc.robot.util.oi.NKPS4Controller;
 import frc.robot.util.tunable.NKSmartNumber;
@@ -89,6 +90,8 @@ public class Robot extends TimedRobot {
 
   NKDoubleSolenoid intake;
   NKSolenoid gear;
+
+  RobotContainer robotContainer;
 
   // private final double kClimbP = 0.00256640574875;
 
@@ -145,6 +148,8 @@ public class Robot extends TimedRobot {
 
     // SmartDashboard.putBoolean("intake", intake.get() == Value.kForward);
     SmartDashboard.putBoolean("high gear", gear.get());
+
+    robotContainer = new RobotContainer();
   }
 
   @Override
@@ -215,55 +220,12 @@ public class Robot extends TimedRobot {
       climber.setTargetPosition(targetClimbPosition);
     }
 
-    // SmartDashboard.putNumber("target rpm", targetRPM);
-
-    // flywheelError = targetRPM - m7.getVelocityRPM();
-
-    // SmartDashboard.putNumber("rpm error", flywheelError);
-
-    // double fp = SmartDashboard.getNumber("fp", kFP);
-    // double fi = SmartDashboard.getNumber("fi", kFI);
-    // double fd = SmartDashboard.getNumber("fd", kFD);
-    // double ff = SmartDashboard.getNumber("ff", kFF);
-    // int fiz = (int) SmartDashboard.getNumber("fiz", kFIZ);
-
-    // double fmia = SmartDashboard.getNumber("flywheel max integral accumulator", m7.getIntegralAccumulator(0));
-
-    // if (kFP != fp) {
-    //   kFP = fp;
-    //   m7.setP(0, kFP);
-    // }
-
-    // if (kFI != fi) {
-    //   kFI = fi;
-    //   m7.setI(0, kFP);
-    // }
-
-    // if (kFD != fd) {
-    //   kFD = fd;
-    //   m7.setD(0, kFP);
-    // }
-
-    // if (kFF != ff) {
-    //   kFF = ff;
-    //   m7.setF(0, kFF);
-    // }
-
-    // if (kFIZ != fiz) {
-    //   kFIZ = fiz;
-    //   m7.setIZone(0, kFIZ);
-    // }
-
-    // if (m7.getIntegralAccumulator(0) != fmia) {
-    //   m7.set(fmia);
-    // }
-
     final double kDumpShot = 3000;
 
     // shooting for week 0
 
-    if (operator.getTriangleButton() && Math.abs(kDumpShot) > 500) shooter.setFlywheelTargetRPM(kDumpShot);
-    else shooter.setFlywheelTargetRPM(0);
+    // if (operator.getTriangleButton() && Math.abs(kDumpShot) > 500) shooter.setFlywheelTargetRPM(kDumpShot);
+    // else shooter.setFlywheelTargetRPM(0);
 
     if (operator.getTriangleButtonPressed()) {
       shooter.setHood(true);

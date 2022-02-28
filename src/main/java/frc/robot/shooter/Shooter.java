@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.shooter;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.ColorSensorV3;
@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Robot;
 import frc.robot.util.control.NKDoubleSolenoid;
 import frc.robot.util.control.NKTalonFX;
 
@@ -36,39 +36,37 @@ public class Shooter extends SubsystemBase {
     public Shooter() {
         flywheel = new NKTalonFX(7);
         flywheel.setPIDF(0, kP, kI, kD, kF);
+        flywheel.enableVoltageCompensation(true);
+        flywheel.configVoltageCompSaturation(12);
         hood = new NKDoubleSolenoid(41, PneumaticsModuleType.REVPH, 0, 1);
         limitSwitch = new DigitalInput(0);
         colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
-        Shuffleboard.getTab("Shooter").addNumber("Target RPM", () -> targetRPM);
-        Shuffleboard.getTab("Shooter").addNumber("Actual RPM", flywheel::getVelocityRPM);
-        Shuffleboard.getTab("Shooter").addNumber("RPM Error", () -> targetRPM - this.flywheel.getVelocityRPM());
-        Shuffleboard.getTab("Shooter").addNumber("Voltage Output", flywheel::getMotorOutputVoltage);
-
         updateSmartDashPIDF();
     }
 
-    public void setFlywheelTargetRPM(double targetRPM) {
+    public void setFlywheelRPM(double targetRPM) {
         this.targetRPM = targetRPM;
+        flywheel.set(ControlMode.PercentOutput, NKTalonFX.Math.rpmToPercent(targetRPM));
         // flywheel.setVelocityRPM(this.targetRPM);
-        if (Math.abs(targetRPM) > 100 && !isAllianceColorCargo())
-            flywheel.set(ControlMode.PercentOutput, 0.40);
-        else if (Math.abs(targetRPM) < 100)
-            flywheel.set(ControlMode.PercentOutput, 0);
-        else
-            flywheel.set(ControlMode.PercentOutput, NKTalonFX.Math.rpmToPercent(targetRPM));
+        // if (Math.abs(targetRPM) > 100 && !isAllianceColorCargo())
+        //     flywheel.set(ControlMode.PercentOutput, 0.40);
+        // else if (Math.abs(targetRPM) < 100)
+        //     flywheel.set(ControlMode.PercentOutput, 0);
+        // else
+        //     flywheel.set(ControlMode.PercentOutput, NKTalonFX.Math.rpmToPercent(targetRPM));
     }
 
-    public void setTargetRPM(double rpm) {
-        flywheel.setVelocityRPM(rpm);
+    public double getFlywheelRPM() {
+        return flywheel.getVelocityRPM();
     }
 
-    public boolean isUpToSpeed() {
-        return (targetRPM > 100) && flywheel.getVelocityRPM() == MathUtil.clamp(flywheel.getVelocityRPM(), (1 - 0.20) * targetRPM, (1 + 0.20) * targetRPM);
+    public void stopFlywheel() {
+        flywheel.set(ControlMode.PercentOutput, 0);
     }
 
     public void setHood(boolean closeShot) {
-        hood.set(closeShot? Value.kForward : Value.kReverse);
+        hood.set(closeShot ? Value.kForward : Value.kReverse);
     }
 
     public boolean getHood() {
@@ -92,7 +90,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean isAllianceColorCargo() {
-        return Robot.isRedAlliance()? this.redCargo : this.blueCargo;
+        return Robot.isRedAlliance() ? this.redCargo : this.blueCargo;
     }
 
     @Override
@@ -116,6 +114,14 @@ public class Shooter extends SubsystemBase {
         this.hadCargoLastTime = this.hasCargo();
 
         updateSmartDashPIDF();
+        log();
+    }
+
+    private void log() {
+        SmartDashboard.putNumber("Target RPM", targetRPM);
+        SmartDashboard.putNumber("Actual RPM", flywheel.getVelocityRPM());
+        SmartDashboard.putNumber("RPM Error", flywheel.getVelocityRPM());
+        SmartDashboard.putNumber("Voltage Output", flywheel.getMotorOutputVoltage());
     }
 
     private void updateSmartDashPIDF() {
