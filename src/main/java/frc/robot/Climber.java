@@ -1,6 +1,5 @@
 package frc.robot;
 
-import javax.swing.plaf.basic.BasicBorders.SplitPaneBorder;
 
 import com.revrobotics.RelativeEncoder;
 
