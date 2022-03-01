@@ -16,7 +16,7 @@ public class IntakeIndexer extends CommandBase {
 
     @Override
     public void execute() {
-        if (intake.isIntaking() && !indexer.limitSwitchTripped()) {
+        if (intake.isIntaking() && indexer.limitSwitchTripped()) {
             indexer.intakeIndex();
         } else {
             indexer.stopIndex();
