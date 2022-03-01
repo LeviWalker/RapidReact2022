@@ -16,6 +16,8 @@ import frc.robot.util.vision.VisionClient;
 
 
 public class Robot extends TimedRobot {
+  RobotContainer robotContainer;
+
   String ip = "pi@wpilibpi";
   short port = 5050;
 
@@ -23,6 +25,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // CameraServer.startAutomaticCapture("Camera 0", 0);
     // CameraServer.startAutomaticCapture("Camera 1", 1);
+    robotContainer = new RobotContainer();
   }
 
   @Override
