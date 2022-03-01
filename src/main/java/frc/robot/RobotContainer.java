@@ -9,6 +9,9 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.drive.Drivetrain;
 import frc.robot.drive.commands.JoystickDrive;
+import frc.robot.indexer.Indexer;
+import frc.robot.indexer.commands.IntakeIndexer;
+import frc.robot.indexer.commands.ShootIndexer;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.shooter.Shooter;
@@ -21,6 +24,7 @@ public class RobotContainer {
     Drivetrain drivetrain;
     Shooter shooter;
     Intake intake;
+    Indexer indexer;
     Compressor compressor;
     VisionClient vision;
     Joystick driver, operator;
@@ -31,6 +35,7 @@ public class RobotContainer {
         drivetrain = new Drivetrain();
         shooter = new Shooter();
         intake = new Intake();
+        indexer = new Indexer();
 
         compressor = new Compressor(41, PneumaticsModuleType.REVPH);
 
@@ -45,6 +50,8 @@ public class RobotContainer {
         configureButtonBindings();
 
         drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, driver));
+        intake.setDefaultCommand(new IntakeCommand(intake, operator));
+        indexer.setDefaultCommand(new IntakeIndexer(intake, indexer));
     }
 
     public void teleopInit() {
@@ -60,7 +67,12 @@ public class RobotContainer {
         driverTriangle = new JoystickButton(driver, OIConstants.trianglePS4);
         driverX = new JoystickButton(driver, OIConstants.xPS4);
 
-        driverCircle.whenPressed(new SpinUpShooter(shooter, 500));
+        driverCircle.whenPressed(new SpinUpShooter(shooter, 500, false));
         driverCircle.whenReleased(new StopShooter(shooter));
+
+        driverSquare.whenPressed(new SpinUpShooter(shooter, 4000, true));
+        driverSquare.whenReleased(new StopShooter(shooter));
+
+        driverTriangle.whenHeld(new ShootIndexer(shooter, indexer));
     }
 }
