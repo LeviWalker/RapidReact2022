@@ -70,9 +70,9 @@ public class RobotContainer {
         driverCircle.whenPressed(new SpinUpShooter(shooter, 500, false));
         driverCircle.whenReleased(new StopShooter(shooter));
 
-        driverSquare.whenPressed(new SpinUpShooter(shooter, 4000, true));
+        driverSquare.whenPressed(new SpinUpShooter(shooter, 4269, true));
         driverSquare.whenReleased(new StopShooter(shooter));
 
-        driverTriangle.whenHeld(new ShootIndexer(shooter, indexer));
+        driverTriangle.whenHeld(new ShootIndexer(shooter, indexer, intake));
     }
 }
