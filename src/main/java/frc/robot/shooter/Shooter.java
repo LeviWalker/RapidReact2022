@@ -19,15 +19,18 @@ import frc.robot.util.control.NKTalonFX;
 
 public class Shooter extends SubsystemBase {
 
-    private double kP = 0.0,
+    private double 
+                   kP = 0.15,
                    kI = 0.0,
                    kD = 0.0,
-                   kF = 0.0;
+                   kF = 0.0475;
 
     double targetRPM;
 
     private NKTalonFX flywheel;
     private NKDoubleSolenoid hood;
+
+    private double kFlywheelTolerance = 20;
 
     private DigitalInput limitSwitch;
 
@@ -49,7 +52,7 @@ public class Shooter extends SubsystemBase {
 
     public void setFlywheelRPM(double targetRPM) {
         this.targetRPM = targetRPM;
-        flywheel.set(ControlMode.PercentOutput, NKTalonFX.Math.rpmToPercent(targetRPM));
+        flywheel.setVelocityRPM(targetRPM);
         // flywheel.setVelocityRPM(this.targetRPM);
         // if (Math.abs(targetRPM) > 100 && !isAllianceColorCargo())
         //     flywheel.set(ControlMode.PercentOutput, 0.40);
@@ -95,9 +98,14 @@ public class Shooter extends SubsystemBase {
         return (DriverStation.getAlliance() == Alliance.Red)? this.redCargo : this.blueCargo;
     }
 
+    public boolean isAtTarget() {
+        return Math.abs(flywheel.getVelocityRPM() - targetRPM) < kFlywheelTolerance;
+    }
+
     @Override
     public void periodic() {
-
+        targetRPM = SmartDashboard.getNumber("Target RPM", 0);
+        flywheel.setVelocityRPM(targetRPM);
         setFlywheelP(SmartDashboard.getNumber("Flyweel P", this.kP));
         setFlywheelI(SmartDashboard.getNumber("Flyweel I", this.kI));
         setFlywheelD(SmartDashboard.getNumber("Flyweel D", this.kD));
@@ -115,18 +123,18 @@ public class Shooter extends SubsystemBase {
 
         this.hadCargoLastTime = this.hasCargo();
 
-        updateSmartDashPIDF();
         log();
     }
 
     private void log() {
-        SmartDashboard.putNumber("Target RPM", targetRPM);
+        SmartDashboard.putBoolean("Is at target", isAtTarget());
         SmartDashboard.putNumber("Actual RPM", flywheel.getVelocityRPM());
         SmartDashboard.putNumber("RPM Error", flywheel.getVelocityRPM());
         SmartDashboard.putNumber("Voltage Output", flywheel.getMotorOutputVoltage());
     }
 
     private void updateSmartDashPIDF() {
+        SmartDashboard.putNumber("Target RPM", targetRPM);
         SmartDashboard.putNumber("Flywheel P", kP);
         SmartDashboard.putNumber("Flywheel I", kI);
         SmartDashboard.putNumber("Flywheel D", kD);

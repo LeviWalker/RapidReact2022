@@ -17,9 +17,11 @@ public class JoystickDrive extends CommandBase {
 
     @Override
     public void execute() {
-        drivetrain.curveDrive(driver.getRawAxis(OIConstants.rightTriggerPS4) - 
-                            driver.getRawAxis(OIConstants.leftTriggerPS4), 
-                            driver.getRawAxis(5));
+        drivetrain.curveDrive(
+                            // driver.getRawAxis(OIConstants.rightTriggerPS4) - 
+                            // driver.getRawAxis(OIConstants.leftTriggerPS4),
+                            driver.getRawAxis(OIConstants.leftYPS4),
+                            driver.getRawAxis(OIConstants.rightXPS4));
     }
 
     @Override
