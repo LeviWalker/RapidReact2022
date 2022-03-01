@@ -40,5 +40,9 @@ public class Intake extends SubsystemBase {
     public boolean isIntaking() {
         return intake.get() > 0;
     }
+
+    public boolean isIntakeRunning() {
+        return Math.abs(intake.get()) > 0;
+    }
     
 }

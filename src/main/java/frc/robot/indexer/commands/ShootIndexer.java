@@ -8,11 +8,13 @@ import frc.robot.shooter.Shooter;
 public class ShootIndexer extends CommandBase {
     Shooter shooter;
     Indexer indexer;
+    Intake intake;
 
-    public ShootIndexer(Shooter shooter, Indexer indexer) {
+    public ShootIndexer(Shooter shooter, Indexer indexer, Intake intake) {
         addRequirements(indexer);
         this.shooter = shooter;
         this.indexer = indexer;
+        this.intake = intake;
     }
 
     @Override

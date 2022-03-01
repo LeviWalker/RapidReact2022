@@ -73,6 +73,6 @@ public class RobotContainer {
         driverSquare.whenPressed(new SpinUpShooter(shooter, 4269, true));
         driverSquare.whenReleased(new StopShooter(shooter));
 
-        driverTriangle.whenHeld(new ShootIndexer(shooter, indexer));
+        driverTriangle.whenHeld(new ShootIndexer(shooter, indexer, intake));
     }
 }
