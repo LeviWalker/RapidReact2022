@@ -8,13 +8,14 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.util.control.NKDoubleSolenoid;
 import frc.robot.util.control.NKTalonFX;
 
 public class Shooter extends SubsystemBase {
 
-    private double 
-                   kP = 0.15,
+    private double kP = 0.15,
                    kI = 0.0,
                    kD = 0.0,
                    kF = 0.0475;
@@ -27,11 +28,19 @@ public class Shooter extends SubsystemBase {
     private double kFlywheelTolerance = 20;
 
     public Shooter() {
-        flywheel = new NKTalonFX(7);
+        flywheel = new NKTalonFX(ShooterConstants.kFlywheelMotorID);
         flywheel.setPIDF(0, kP, kI, kD, kF);
         flywheel.enableVoltageCompensation(true);
         flywheel.configVoltageCompSaturation(12);
-        hood = new NKDoubleSolenoid(41, PneumaticsModuleType.REVPH, 0, 1);
+        hood = new NKDoubleSolenoid(
+            Constants.kPH,
+            Constants.kPHType,
+            ShooterConstants.kHoodForwardChannelID,
+            ShooterConstants.kHoodReverseChannelID
+        );
+
+        SmartDashboard.putNumber("setFlywheelRPM", targetRPM);
+        SmartDashboard.putBoolean("setHoodExtended", getHoodExtended());
     }
 
     public void setFlywheelRPM(double targetRPM) {
@@ -47,20 +56,20 @@ public class Shooter extends SubsystemBase {
         flywheel.set(ControlMode.PercentOutput, 0);
     }
 
-    public void setHood(boolean closeShot) {
-        hood.set(closeShot ? Value.kForward : Value.kReverse);
+    public void setHoodExtended(boolean extended) {
+        hood.set(extended? ShooterConstants.kHoodExtended : ShooterConstants.kHoodRetracted);
     }
 
-    public boolean getHood() {
-        return hood.get() == Value.kForward;
+    public boolean getHoodExtended() {
+        return hood.get() == ShooterConstants.kHoodExtended;
     }
 
     public void toggleHood() {
-        setHood(!getHood());
+        setHoodExtended(!getHoodExtended());
     }
 
     public boolean isAtTarget() {
-        return Math.abs(flywheel.getVelocityRPM() - targetRPM) < kFlywheelTolerance;
+        return targetRPM > 100 && Math.abs(flywheel.getVelocityRPM() - targetRPM) < kFlywheelTolerance;
     }
 
     @Override
@@ -69,9 +78,13 @@ public class Shooter extends SubsystemBase {
     }
 
     private void log() {
-        SmartDashboard.putBoolean("Is at target", isAtTarget());
-        SmartDashboard.putNumber("Actual RPM", flywheel.getVelocityRPM());
-        SmartDashboard.putNumber("RPM Error", flywheel.getVelocityRPM());
+        SmartDashboard.putNumber("Flywheel RPM", flywheel.getVelocityRPM());
         SmartDashboard.putNumber("Voltage Output", flywheel.getMotorOutputVoltage());
+
+        // double newRPM = SmartDashboard.getNumber("setFlywheelRPM", targetRPM);
+        // if (targetRPM != newRPM) setFlywheelRPM(newRPM);
+
+        // boolean newHood = SmartDashboard.getBoolean("setHoodExtended", getHoodExtended());
+        // if (getHoodExtended() != newHood) setHoodExtended(newHood);
     }
 }

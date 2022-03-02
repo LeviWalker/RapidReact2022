@@ -18,7 +18,7 @@ public class SpinUpShooter extends CommandBase {
     @Override
     public void initialize() {
         shooter.setFlywheelRPM(rpm);
-        shooter.setHood(hood);
+        shooter.setHoodExtended(hood);
     }
 
     @Override

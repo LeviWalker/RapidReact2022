@@ -3,63 +3,68 @@ package frc.robot.climber;
 
 import com.revrobotics.RelativeEncoder;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ClimbConstants;
 import frc.robot.util.control.NKSparkMax;
 
 public class Climber extends SubsystemBase {
     NKSparkMax left, right;
-    RelativeEncoder lEncoder, rEncoder;
+    RelativeEncoder leftEnc, rightEnc;
     Servo lServo, rServo;
 
     boolean neutral;
 
-    private final double climbExtended = 247.793, climbRetracted = 0;
-
-    private double deadbandError = 7, deadbandSpeed = 0.02;
-    private final double kP = deadbandError / deadbandSpeed;
-
-    private double targetPosition;
-
-    private double MaxSpeed = 0.70;
-
-    double error, speed;
-
     public Climber() {
-        left = new NKSparkMax(11, true); // left climb down -> increasing position
-        right = new NKSparkMax(12, true); // right climb up -> decreasing position
+        left = new NKSparkMax(ClimbConstants.kLeftClimbMotorID, true); // left climb down -> increasing position
+        right = new NKSparkMax(ClimbConstants.kRightClimbMotorID, true); // right climb up -> decreasing position
 
         left.setInverted(true);
         right.setInverted(true);
+
+        leftEnc = left.getEncoder();
+        rightEnc = right.getEncoder();
+
+        lServo = new Servo(ClimbConstants.kLeftClimbServoID);
+        rServo = new Servo(ClimbConstants.kRightClimbServoID);
+
+        // TODO Bring motors together once robot is fixed
+
+        neutral = true;
     }
 
-    public void setTargetPosition(double position) {
-        this.targetPosition = position;
+    public void unlockClimb() {
+        neutral = false;
     }
 
-    public double getError() {
-        return error;
+    public void lockClimb() {
+        neutral = true;
+    }
+
+    public void setLeftClimbMotor(double speed) {
+        left.set(speed);
+    }
+
+    public void setRightClimbMotor(double speed) {
+        right.set(speed);
+    }
+
+    public double getLeftEncoderPosition() {
+        return leftEnc.getPosition();
+    }
+
+    public double getRightEncoderPosition() {
+        return rightEnc.getPosition();
     }
 
     @Override
     public void periodic() {
         if (neutral) {
-            lServo.setAngle(90);
-            rServo.setAngle(90);
+            lServo.setAngle(ClimbConstants.kLeftServoNeutralAngle);
+            rServo.setAngle(ClimbConstants.kRightServoNeutralAngle);
         } else {
-            lServo.setAngle(50);
-            rServo.setAngle(130);
+            lServo.setAngle(ClimbConstants.kLeftServoClimbAngle);
+            rServo.setAngle(ClimbConstants.kRightServoClimbAngle);
         }
-
-        if (!neutral) {
-            error = targetPosition - right.getEncoder().getPosition();
-            speed = MathUtil.clamp(kP * error, -MaxSpeed, MaxSpeed);
-            right.set(speed);
-        }
-    }
-
-    public double getTargetPosition() {
-        return targetPosition;
     }
 }

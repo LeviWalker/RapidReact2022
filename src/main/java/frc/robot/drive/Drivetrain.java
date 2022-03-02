@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.util.control.NKSolenoid;
@@ -40,15 +41,14 @@ public class Drivetrain extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public Drivetrain() {
+    gear = new NKSolenoid(Constants.kPH, Constants.kPHType, DriveConstants.kGearShifterChannel);
 
-    gear = new NKSolenoid(41, PneumaticsModuleType.REVPH, 4);
-
-    leftMaster = new NKTalonFX(DriveConstants.kLeftMotor1Port);
-    rightMaster = new NKTalonFX(DriveConstants.kRightMotor1Port);
-    leftFront = new NKTalonFX(DriveConstants.kLeftMotor2Port);
-    rightFront = new NKTalonFX(DriveConstants.kRightMotor2Port);
-    leftRear = new NKTalonFX(DriveConstants.kLeftMotor3Port);
-    rightRear = new NKTalonFX(DriveConstants.kRightMotor3Port);
+    leftMaster = new NKTalonFX(DriveConstants.kLeftMasterID);
+    rightMaster = new NKTalonFX(DriveConstants.kRightMasterID);
+    leftFront = new NKTalonFX(DriveConstants.kLeftFrontID);
+    rightFront = new NKTalonFX(DriveConstants.kRightFrontID);
+    leftRear = new NKTalonFX(DriveConstants.kLeftRearID);
+    rightRear = new NKTalonFX(DriveConstants.kRightRearID);
 
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
@@ -70,7 +70,7 @@ public class Drivetrain extends SubsystemBase {
     rightFront.setNeutralMode(NeutralMode.Coast);
     rightRear.setNeutralMode(NeutralMode.Coast);
 
-    currentLimitConfiguration = new SupplyCurrentLimitConfiguration(true, 49, 38, 0);
+    currentLimitConfiguration = new SupplyCurrentLimitConfiguration(true, 40, 40, 0);
 
     leftMaster.configSupplyCurrentLimit(currentLimitConfiguration);
     leftFront.configSupplyCurrentLimit(currentLimitConfiguration);
@@ -86,8 +86,6 @@ public class Drivetrain extends SubsystemBase {
 
     resetEncoders();
     m_odometry = new DifferentialDriveOdometry(imu.getRotation2d());
-
-    SmartDashboard.putNumber("kDriveStraightP", kDriveStraightP);
   }
 
   public void setHighGear(boolean highGear) {
@@ -112,14 +110,6 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-
-    final double p = SmartDashboard.getNumber("kDriveStraightP", kDriveStraightP);
-
-    if (kDriveStraightP != p) {
-      kDriveStraightP = p;
-      SmartDashboard.putNumber("kDriveStraightP", kDriveStraightP);
-    }
-
     // Update the odometry in the periodic block
     updateOdometry();
   }

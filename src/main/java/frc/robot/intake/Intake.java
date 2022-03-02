@@ -1,9 +1,8 @@
 package frc.robot.intake;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.util.control.NKDoubleSolenoid;
 import frc.robot.util.control.NKVictorSPX;
 
@@ -13,28 +12,29 @@ public class Intake extends SubsystemBase {
     NKDoubleSolenoid deployer;
 
     public Intake() {
-        intake = new NKVictorSPX(9);
-        deployer = new NKDoubleSolenoid(41, PneumaticsModuleType.REVPH, 2, 3);
-    }
-
-    public void setIntake(double power) {
-        intake.set(
-            (power > 0.07)?
-            MathUtil.clamp(power, 0.25, 0.60) :
-            (power < -0.07) ? MathUtil.clamp(power, -0.60, -0.25) : 0
+        intake = new NKVictorSPX(IntakeConstants.kIntakeMotorID);
+        deployer = new NKDoubleSolenoid(
+            Constants.kPH,
+            Constants.kPHType,
+            IntakeConstants.kIntakeDeployerForwardChannel,
+            IntakeConstants.kIntakeDeployerReverseChannel
         );
     }
 
+    public void setIntake(double power) {
+        intake.set(power);
+    }
+
     public boolean isDeployed() {
-        return deployer.get() == Value.kForward;
+        return deployer.get() == IntakeConstants.kDeployed;
     }
 
     public void deploy() {
-        deployer.set(Value.kForward);
+        deployer.set(IntakeConstants.kDeployed);
     }
 
     public void retract() {
-        deployer.set(Value.kReverse);
+        deployer.set(IntakeConstants.kRetracted);
     }
 
     public boolean isIntaking() {

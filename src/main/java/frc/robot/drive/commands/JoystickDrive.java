@@ -17,11 +17,17 @@ public class JoystickDrive extends CommandBase {
 
     @Override
     public void execute() {
+        // GTA Control
         drivetrain.curveDrive(
-                            // driver.getRawAxis(OIConstants.rightTriggerPS4) - 
-                            // driver.getRawAxis(OIConstants.leftTriggerPS4),
-                            driver.getRawAxis(OIConstants.leftYPS4),
-                            driver.getRawAxis(OIConstants.rightXPS4));
+            driver.getRawAxis(OIConstants.kRightTrigger) - driver.getRawAxis(OIConstants.kLeftTrigger),
+            driver.getRawAxis(OIConstants.kLeftXJoystick)
+        );
+
+        // Sticks Control
+        // drivetrain.curveDrive(
+        //     driver.getRawAxis(OIConstants.kLeftYJoystick),
+        //     driver.getRawAxis(OIConstants.kRightXJoystick)
+        // );
     }
 
     @Override

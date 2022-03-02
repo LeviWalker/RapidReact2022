@@ -1,4 +1,4 @@
-package frc.robot.util.vision;
+package frc.robot.vision;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

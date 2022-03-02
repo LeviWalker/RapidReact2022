@@ -3,75 +3,82 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.climber.Climber;
+import frc.robot.climber.commands.ClimbDown;
 import frc.robot.drive.Drivetrain;
 import frc.robot.drive.commands.JoystickDrive;
 import frc.robot.indexer.Indexer;
-import frc.robot.indexer.commands.IntakeIndexer;
+import frc.robot.indexer.commands.IntakeIndexCommand;
 import frc.robot.indexer.commands.ShootIndexer;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.shooter.Shooter;
 import frc.robot.shooter.commands.SpinUpShooter;
 import frc.robot.shooter.commands.StopShooter;
-import frc.robot.util.vision.VisionClient;
-import frc.robot.util.vision.VisionClient.VisionClientException;
+import frc.robot.vision.VisionClient;
+import frc.robot.vision.VisionSystem;
+import frc.robot.vision.VisionClient.VisionClientException;
+import frc.robot.vision.commands.VisionOff;
+import frc.robot.vision.commands.VisionOn;
 
 public class RobotContainer {
     Drivetrain drivetrain;
     Shooter shooter;
     Intake intake;
     Indexer indexer;
+    Climber climber;
+    PowerDistribution pdh;
     Compressor compressor;
-    VisionClient vision;
+    VisionSystem vision;
     Joystick driver, operator;
     JoystickButton driverCircle, driverTriangle, driverSquare, driverX;
 
     public RobotContainer() {
-
+        // initialize subsystems
         drivetrain = new Drivetrain();
         shooter = new Shooter();
         intake = new Intake();
         indexer = new Indexer();
+        climber = new Climber();
 
-        compressor = new Compressor(41, PneumaticsModuleType.REVPH);
+        pdh = new PowerDistribution(Constants.kPDH, Constants.kPDHType);
+        compressor = new Compressor(Constants.kPH, Constants.kPHType);
 
-        try {
-            vision = new VisionClient(VisionConstants.kVisionIPAddress, VisionConstants.kVisionPort);
-            Shuffleboard.getTab("Vision").addNumber("Distance", vision::getDistance);
-            Shuffleboard.getTab("Vision").addNumber("Angle", vision::getAngle);
-        } catch (VisionClientException e) {
-            e.printStackTrace();
-        }
+        vision = new VisionSystem(pdh);
         
         configureButtonBindings();
 
         drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, driver));
-        intake.setDefaultCommand(new IntakeCommand(intake, operator));
-        indexer.setDefaultCommand(new IntakeIndexer(intake, indexer));
+        intake.setDefaultCommand(new IntakeCommand(intake, indexer, operator));
+        indexer.setDefaultCommand(new IntakeIndexCommand(intake, indexer));
     }
-
-    public void teleopInit() {
-        new IntakeCommand(intake, operator).schedule();
-    }
-
+    
     public void configureButtonBindings() {
-        driver = new Joystick(0);
-        operator = new Joystick(1);
+        driver = new Joystick(OIConstants.kDriverID);
+        operator = new Joystick(OIConstants.kOperatorID);
 
-        driverCircle = new JoystickButton(driver, OIConstants.circlePS4);
-        driverSquare = new JoystickButton(driver, OIConstants.squarePS4);
-        driverTriangle = new JoystickButton(driver, OIConstants.trianglePS4);
-        driverX = new JoystickButton(driver, OIConstants.xPS4);
+        driverCircle = new JoystickButton(driver, OIConstants.kCircle);
+        driverSquare = new JoystickButton(driver, OIConstants.kSquare);
+        driverTriangle = new JoystickButton(driver, OIConstants.kTriangle);
+        driverX = new JoystickButton(driver, OIConstants.kX);
 
-        driverCircle.whenPressed(new SpinUpShooter(shooter, 500, false));
-        driverCircle.whenReleased(new StopShooter(shooter));
+        new JoystickButton(driver, OIConstants.kShare)
+            .whenPressed(new VisionOff(vision));
+        new JoystickButton(driver, Constants.OIConstants.kOptions)
+            .whenPressed(new VisionOn(vision));
 
-        driverSquare.whenPressed(new SpinUpShooter(shooter, 4269, true));
-        driverSquare.whenReleased(new StopShooter(shooter));
+        driverCircle
+            .whenPressed(new SpinUpShooter(shooter, 500, false))
+            .whenReleased(new StopShooter(shooter));
+
+        driverSquare
+            .whenPressed(new SpinUpShooter(shooter, 4269, true))
+            .whenReleased(new StopShooter(shooter));
 
         driverTriangle.whenHeld(new ShootIndexer(shooter, indexer, intake));
     }
