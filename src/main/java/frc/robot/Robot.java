@@ -4,15 +4,8 @@
 
 package frc.robot;
 
-import com.revrobotics.ColorSensorV3;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.util.tunable.NKSmartNumber;
-import frc.robot.vision.VisionClient;
 
 
 public class Robot extends TimedRobot {

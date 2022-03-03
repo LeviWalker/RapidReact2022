@@ -10,7 +10,7 @@ public class SmartDashSpinUpShooter extends InstantCommand {
                 shooter,
                 SmartDashboard.getNumber("RPM", shooter.getFlywheelRPM()),
                 SmartDashboard.getBoolean("Hood Extended", shooter.getHoodExtended())
-            ).schedule()
+            ).initialize()
         );
         SmartDashboard.putNumber("RPM", shooter.getFlywheelRPM());
         SmartDashboard.putBoolean("Hood Extended", shooter.getHoodExtended());
