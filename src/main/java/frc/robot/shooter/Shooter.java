@@ -1,11 +1,5 @@
 package frc.robot.shooter;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.revrobotics.ColorSensorV3;
-
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -20,7 +14,7 @@ public class Shooter extends SubsystemBase {
                    kD = 0.0,
                    kF = 0.0475;
 
-    double targetRPM;
+    double targetRPM, targetPercent;
 
     private NKTalonFX flywheel;
     private NKDoubleSolenoid hood;
@@ -30,8 +24,8 @@ public class Shooter extends SubsystemBase {
     public Shooter() {
         flywheel = new NKTalonFX(ShooterConstants.kFlywheelMotorID);
         flywheel.setPIDF(0, kP, kI, kD, kF);
-        flywheel.enableVoltageCompensation(true);
         flywheel.configVoltageCompSaturation(12);
+        flywheel.enableVoltageCompensation(true);
         hood = new NKDoubleSolenoid(
             Constants.kPH,
             Constants.kPHType,
@@ -53,7 +47,8 @@ public class Shooter extends SubsystemBase {
     }
 
     public void stopFlywheel() {
-        flywheel.set(ControlMode.PercentOutput, 0);
+        targetPercent = 0;
+        flywheel.set(0); // removed ControlMode.PercentOutput to use the get() method
     }
 
     public void setHoodExtended(boolean extended) {
@@ -69,7 +64,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean isAtTarget() {
-        return targetRPM > 100 && Math.abs(flywheel.getVelocityRPM() - targetRPM) < kFlywheelTolerance;
+        return (targetPercent > 0.05 || targetRPM > 100) && Math.abs(flywheel.getVelocityRPM() - targetRPM) < kFlywheelTolerance;
     }
 
     @Override
@@ -80,11 +75,5 @@ public class Shooter extends SubsystemBase {
     private void log() {
         SmartDashboard.putNumber("Flywheel RPM", flywheel.getVelocityRPM());
         SmartDashboard.putNumber("Voltage Output", flywheel.getMotorOutputVoltage());
-
-        // double newRPM = SmartDashboard.getNumber("setFlywheelRPM", targetRPM);
-        // if (targetRPM != newRPM) setFlywheelRPM(newRPM);
-
-        // boolean newHood = SmartDashboard.getBoolean("setHoodExtended", getHoodExtended());
-        // if (getHoodExtended() != newHood) setHoodExtended(newHood);
     }
 }

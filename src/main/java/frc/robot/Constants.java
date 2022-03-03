@@ -132,21 +132,26 @@ public class Constants {
         // Servo PWM IDs
         public static final byte kLeftClimbServoID = 0;
         public static final byte kRightClimbServoID = 1;
+        
+        // Limit Switch DIO IDs
+        public static final int kLeftClimbLowLimitSwitchID = 1;
+        public static final int kRightClimbLowLimitSwitchID = 2;
 
         // Servo Angle Values
-        public static final short kLeftServoNeutralAngle = 90;
+        public static final short kLeftServoNeutralAngle = 90; // 15;
         public static final short kRightServoNeutralAngle = 90;
-        public static final short kLeftServoClimbAngle = 50;
+        public static final short kLeftServoClimbAngle = 50; // -5;
         public static final short kRightServoClimbAngle = 130;
-
+        
         // Estimated Climb Parameters
-        public static final float kClimbDownHallSensorValue = 0.0f;
-        public static final float kClimbUpHallSensorValue = 247.793f;
+        public static final float kL2ClimbDownHallSensorValue = 0.0f;
+        public static final float kL2ClimbUpHallSensorValue = 247.793f;
         public static final float kClimbSpeedDeadband = 0.02f;
-        public static final float kErrorAtDeadband = 7.793f;
-        public static final float kAbsoluteMaxSpeed = 0.70f;
+        public static final float kErrorAtDeadband = 5f;
+        public static final float kAbsoluteMaxSpeed = 0.60f;
         // speed = kP * error => kP = speed / error
-        public static final float kP = kClimbSpeedDeadband / kClimbUpHallSensorValue;
+        public static final float kP = kClimbSpeedDeadband / kErrorAtDeadband;
+        public static final double kPositionTolerance = 0.5;
     }
 
     public static class VisionConstants {

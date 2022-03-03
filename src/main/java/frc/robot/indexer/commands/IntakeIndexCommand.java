@@ -1,6 +1,5 @@
 package frc.robot.indexer.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.indexer.Indexer;
 import frc.robot.intake.Intake;
@@ -17,9 +16,7 @@ public class IntakeIndexCommand extends CommandBase {
 
     @Override
     public void execute() {
-        SmartDashboard.putBoolean("intake.isIntaking()", intake.isIntaking());
-        SmartDashboard.putBoolean("!indexer.limitSwitchTripped()", !indexer.limitSwitchTripped());
-        if (intake.isDeployed() && !indexer.limitSwitchTripped()) {
+        if (intake.isDeployed() && !indexer.hasCargo()) {
             indexer.intakeIndex();
         } else {
             indexer.stopIndex();

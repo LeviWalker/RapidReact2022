@@ -32,7 +32,7 @@ public class Indexer extends SubsystemBase {
         transfer.set(0.0);
     }
 
-    public boolean limitSwitchTripped() {
+    public boolean hasCargo() {
         return !limit.get();
     }
 
