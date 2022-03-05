@@ -3,6 +3,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.climber.Climber;
@@ -64,6 +66,14 @@ public class RobotContainer {
             .whenHeld(new ShootIndexCommand(shooter, indexer))
             .whenReleased(new StopShooter(shooter));
 
+        new JoystickButton(operator, OIConstants.kX).whenPressed(new ResetClimbSequence(climber));
+
+        new JoystickButton(operator, OIConstants.kShare)
+            .whenPressed(new L2ClimbUpSequence(climber, operator));
+        new JoystickButton(operator, OIConstants.kOptions)
+            .whenPressed(new L2ClimbDownSequence(climber, operator));
+        // new JoystickButton(operator, OIConstants.kSquare).whenPressed(new StopClimb(climber));
+        
         /**
          * Controls:
          * 

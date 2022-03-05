@@ -145,13 +145,14 @@ public class Constants {
         
         // Estimated Climb Parameters
         public static final float kL2ClimbDownHallSensorValue = 0.0f;
-        public static final float kL2ClimbUpHallSensorValue = 247.793f;
-        public static final float kClimbSpeedDeadband = 0.02f;
+        public static final float kL2ClimbUpHallSensorValue = 229.77f;
+        public static final float kClimbSpeedDeadband = 0.05f;
         public static final float kErrorAtDeadband = 5f;
         public static final float kAbsoluteMaxSpeed = 0.60f;
         // speed = kP * error => kP = speed / error
         public static final float kP = kClimbSpeedDeadband / kErrorAtDeadband;
-        public static final double kPositionTolerance = 0.5;
+        public static final double kPositionTolerance = 4;
+        public static final int kRatchetSolenoidChannel = 5;
     }
 
     public static class VisionConstants {

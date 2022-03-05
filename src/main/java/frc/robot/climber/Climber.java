@@ -1,20 +1,20 @@
 package frc.robot.climber;
 
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ClimbConstants;
+import frc.robot.util.control.NKSolenoid;
 import frc.robot.util.control.NKSparkMax;
 
 public class Climber extends SubsystemBase {
     NKSparkMax left, right;
     RelativeEncoder leftEnc, rightEnc;
-    Servo lServo, rServo;
+    NKSolenoid climbShifter; // neutral -> false , climb -> true
     DigitalInput leftLowLimit, rightLowLimit;
 
     boolean neutral;
@@ -32,22 +32,24 @@ public class Climber extends SubsystemBase {
         leftEnc = left.getEncoder();
         rightEnc = right.getEncoder();
         
-        lServo = new Servo(ClimbConstants.kLeftClimbServoID);
-        rServo = new Servo(ClimbConstants.kRightClimbServoID);
+        climbShifter = new NKSolenoid(Constants.kPH, Constants.kPHType, ClimbConstants.kRatchetSolenoidChannel);
         
         leftLowLimit = new DigitalInput(ClimbConstants.kLeftClimbLowLimitSwitchID);
         rightLowLimit = new DigitalInput(ClimbConstants.kRightClimbLowLimitSwitchID);
         
-        neutral = true;
-        SmartDashboard.putBoolean("neutral", neutral);
+        // SmartDashboard.putBoolean("neutral", neutral);
     }
     
     public void unlockClimb() {
-        neutral = false;
+        climbShifter.set(true);
     }
     
     public void lockClimb() {
-        neutral = true;
+        climbShifter.set(false);
+    }
+
+    public boolean isLocked() {
+        return !climbShifter.get();
     }
 
     public void setClimbMotors(double speed) {
@@ -83,17 +85,12 @@ public class Climber extends SubsystemBase {
     
     @Override
     public void periodic() {
-        neutral = SmartDashboard.getBoolean("neutral", neutral);
-        if (neutral) {
-            lServo.setAngle(ClimbConstants.kLeftServoNeutralAngle);
-            rServo.setAngle(ClimbConstants.kRightServoNeutralAngle);
-        } else {
-            lServo.setAngle(ClimbConstants.kLeftServoClimbAngle);
-            rServo.setAngle(ClimbConstants.kRightServoClimbAngle);
-        }
+        // neutral = SmartDashboard.getBoolean("neutral", neutral);
 
-        SmartDashboard.putBoolean("Left Low Limit", isLeftAtBottom());
-        SmartDashboard.putBoolean("Right Low Limit", isRightAtBottom());
+        // SmartDashboard.putBoolean("Left Low Limit", isLeftAtBottom());
+        // SmartDashboard.putBoolean("Right Low Limit", isRightAtBottom());
+
+        SmartDashboard.putNumber("left climb position", leftEnc.getPosition());
     }
 
     public void resetLeftEncoder() {
