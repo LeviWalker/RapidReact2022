@@ -18,10 +18,11 @@ public class TimedAutoSequence extends SequentialCommandGroup {
                 new ShootIndexCommand(indexer, shooter)
             ),   // 1.5 sec
             new ParallelRaceGroup(
-                new TimedDrive(drivetrain, 2.5, 0.6),
-                new AutoIntake(intake)
-            ),                                       // 4.5 sec
-            new TimedDrive(drivetrain, 2.75, -0.6),     // 7.5 sec
+                new AutoIntake(intake),
+                new SequentialCommandGroup(
+                    new TimedDrive(drivetrain, 2.5, 0.6),                                      // 4.5 sec
+                    new TimedDrive(drivetrain, 2.75, -0.6))
+            ),    // 7.5 sec
             new ParallelRaceGroup(
                 new TimedShoot(shooter, 1.5),
                 new ShootIndexCommand(indexer, shooter)
