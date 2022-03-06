@@ -21,6 +21,11 @@ public class ShootIndexCommand extends CommandBase {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        indexer.stopIndex();
+    }
+
+    @Override
     public boolean isFinished() {
         return false;
     }

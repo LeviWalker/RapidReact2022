@@ -89,10 +89,10 @@ public class RobotContainer {
             .whenPressed(new HighGear(drivetrain))
             .whenReleased(new LowGear(drivetrain));
 
-        new JoystickButton(operator, OIConstants.kTriangle)
-            .whenPressed(new VisionSpinUpShooter(shooter, vision))
-            .whenHeld(new ShootIndexCommand(indexer, shooter))
-            .whenReleased(new StopShooter(shooter));
+        // new JoystickButton(operator, OIConstants.kTriangle) // throws IllegalArgumentException
+        //     .whenPressed(new VisionShootSequence(shooter, vision))
+        //     .whenHeld(new ShootIndexCommand(indexer, shooter))
+        //     .whenReleased(new StopShooter(shooter));
 
         new JoystickButton(operator, OIConstants.kSquare)
             .whenPressed(new SpinUpShooter(shooter, 3650, true))

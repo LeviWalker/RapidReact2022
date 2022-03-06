@@ -14,12 +14,14 @@ public class TimedShoot extends WaitCommand {
 
     @Override
     public void initialize() {
+        super.initialize();
         this.shooter.setHoodExtended(ShooterConstants.kAutoShotHoodExtended);
         this.shooter.setFlywheelRPM(ShooterConstants.kAutoShotRPM);
     }
 
     @Override
     public void end(boolean interrupted) {
+        super.end(interrupted);
        this.shooter.stopFlywheel();
     }
 }

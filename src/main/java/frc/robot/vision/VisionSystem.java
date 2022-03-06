@@ -26,8 +26,9 @@ public class VisionSystem extends SubsystemBase {
         } catch (VisionClientException e) {
             e.printStackTrace();
         }
-        if (isVisionClientHavingProblems()) this.setLightOff();
-        else this.setLightOn();
+        this.setLightOff();
+        // if (isVisionClientHavingProblems()) this.setLightOff();
+        // else this.setLightOn();
     }
 
     /**

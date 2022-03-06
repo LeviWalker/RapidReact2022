@@ -17,11 +17,13 @@ public class TimedDrive extends WaitCommand {
 
     @Override
     public void initialize() {
+        super.initialize();
         drivetrain.arcadeDrive(motorPower, 0);
     }
 
     @Override
     public void end(boolean interrupted) {
+        super.end(interrupted);
         drivetrain.arcadeDrive(0, 0);
     }
     

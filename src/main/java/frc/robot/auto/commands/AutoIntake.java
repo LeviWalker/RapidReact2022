@@ -20,7 +20,7 @@ public class AutoIntake extends CommandBase {
 
     @Override
     public void execute() {
-        intake.setIntake(IntakeConstants.kMaxIntakeSpeed);
+        intake.setIntake(-IntakeConstants.kMaxIntakeSpeed);
     }
 
     @Override
