@@ -1,10 +1,10 @@
 package frc.robot.shooter.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.shooter.Shooter;
 
-public class SmartDashSpinUpShooter extends InstantCommand {
+public class SmartDashSpinUpShooter extends CommandBase {
     Shooter shooter;
     public SmartDashSpinUpShooter(Shooter shooter) {
         this.shooter = shooter;
@@ -15,6 +15,6 @@ public class SmartDashSpinUpShooter extends InstantCommand {
     @Override
     public void initialize() {
         shooter.setFlywheelRPM(SmartDashboard.getNumber("RPM", shooter.getFlywheelRPM()));
-        shooter.setHoodExtended(SmartDashboard.putBoolean("Hood Extended", shooter.getHoodExtended()));
+        // shooter.setHoodExtended(SmartDashboard.putBoolean("Hood Extended", shooter.getHoodExtended()));
     }
 }

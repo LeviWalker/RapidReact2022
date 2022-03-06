@@ -14,5 +14,6 @@ public class VisionShootSequence extends SequentialCommandGroup {
               new VisionSpinUpShooter(shooter, vision),
               new VisionOff(vision)
         );
+        this.withInterrupt(vision::isVisionClientOperational);
     }
 }

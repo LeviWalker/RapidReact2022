@@ -1,10 +1,10 @@
 package frc.robot.climber.commands;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.climber.Climber;
 
-public class PositionClimb extends ParallelCommandGroup {
-    public PositionClimb(Climber climber, double targetPosition) {
+public class PositionClimbRace extends ParallelRaceGroup {
+    PositionClimbRace(Climber climber, double targetPosition) {
         super(
             new PositionLeftClimb(climber, targetPosition),
             new PositionRightClimb(climber, targetPosition)

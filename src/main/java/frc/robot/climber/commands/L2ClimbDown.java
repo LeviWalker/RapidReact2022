@@ -9,9 +9,4 @@ public class L2ClimbDown extends PositionClimb {
         super(climber, ClimbConstants.kL2ClimbDownHallSensorValue);
         this.climber = climber;
     }
-
-    @Override
-    public boolean isFinished() {
-        return climber.isLeftAtBottom() && climber.isRightAtBottom() && super.isFinished();
-    }
 }

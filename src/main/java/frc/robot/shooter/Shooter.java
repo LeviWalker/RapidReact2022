@@ -12,14 +12,14 @@ public class Shooter extends SubsystemBase {
     private double kP = 0.15,
                    kI = 0.0,
                    kD = 0.0,
-                   kF = 0.0475;
+                   kF = 0.0480;
 
     double targetRPM, targetPercent;
 
     private NKTalonFX flywheel;
     private NKDoubleSolenoid hood;
 
-    private double kFlywheelTolerance = 20;
+    private double kFlywheelTolerance = 40;
 
     public Shooter() {
         flywheel = new NKTalonFX(ShooterConstants.kFlywheelMotorID);
@@ -33,8 +33,8 @@ public class Shooter extends SubsystemBase {
             ShooterConstants.kHoodReverseChannelID
         );
 
-        SmartDashboard.putNumber("setFlywheelRPM", targetRPM);
-        SmartDashboard.putBoolean("setHoodExtended", getHoodExtended());
+        // SmartDashboard.putNumber("setFlywheelRPM", targetRPM);
+        // SmartDashboard.putBoolean("setHoodExtended", getHoodExtended());
     }
 
     public void setFlywheelRPM(double targetRPM) {
@@ -74,6 +74,6 @@ public class Shooter extends SubsystemBase {
 
     private void log() {
         SmartDashboard.putNumber("Flywheel RPM", flywheel.getVelocityRPM());
-        SmartDashboard.putNumber("Voltage Output", flywheel.getMotorOutputVoltage());
+        // SmartDashboard.putNumber("Voltage Output", flywheel.getMotorOutputVoltage());
     }
 }

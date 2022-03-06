@@ -2,6 +2,7 @@ package frc.robot.climber;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,6 +26,9 @@ public class Climber extends SubsystemBase {
 
         left.setIdleMode(IdleMode.kBrake);
         right.setIdleMode(IdleMode.kBrake);
+
+        left.setSmartCurrentLimit(40);
+        right.setSmartCurrentLimit(40);
 
         left.setInverted(false);
         right.setInverted(true);
@@ -90,7 +94,7 @@ public class Climber extends SubsystemBase {
         // SmartDashboard.putBoolean("Left Low Limit", isLeftAtBottom());
         // SmartDashboard.putBoolean("Right Low Limit", isRightAtBottom());
 
-        SmartDashboard.putNumber("left climb position", leftEnc.getPosition());
+        // SmartDashboard.putNumber("left climb position", leftEnc.getPosition());
     }
 
     public void resetLeftEncoder() {

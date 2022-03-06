@@ -118,8 +118,14 @@ public class Constants {
         public static final double kDefaultTransferSpeed = 0.40; // TODO Find this
 
         // Tolerances on the flywheel
-        public static final double kVelocityToleranceRPM = 50;
+        public static final double kVelocityToleranceRPM = 40;
         public static final int kMinCount = 4;
+
+        public static final boolean kAutoShotHoodExtended = true;
+		public static final double kAutoShotRPM = 3650;
+
+        public static final boolean kSafeZoneHoodExtended = true;
+		public static final double kSafeZoneRPM = 4300;
     }
 
     public static class ClimbConstants {

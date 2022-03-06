@@ -17,24 +17,24 @@ public class PositionLeftClimb extends CommandBase {
     public PositionLeftClimb(Climber climber, double targetPosition) {
         this.targetPosition = targetPosition;
         this.climber = climber;
-        SmartDashboard.putNumber("Left Climb kP", ClimbConstants.kP);
-        SmartDashboard.putNumber("Left Abs Max Speed from kP", ClimbConstants.kP * ClimbConstants.kL2ClimbUpHallSensorValue);
-        SmartDashboard.putNumber("Left Abs Max Climb Speed", ClimbConstants.kAbsoluteMaxSpeed);
+        // SmartDashboard.putNumber("Left Climb kP", ClimbConstants.kP);
+        // SmartDashboard.putNumber("Left Abs Max Speed from kP", ClimbConstants.kP * ClimbConstants.kL2ClimbUpHallSensorValue);
+        // SmartDashboard.putNumber("Left Abs Max Climb Speed", ClimbConstants.kAbsoluteMaxSpeed);
     }
 
     @Override
     public void execute() {
 
-        double newP = SmartDashboard.getNumber("Left Climb kP", this.p);
-        if (this.p != newP) {
-            this.p = newP;
-            SmartDashboard.putNumber("Left Abs Max Speed from kP", this.p * ClimbConstants.kL2ClimbUpHallSensorValue);
-        }
+        // double newP = SmartDashboard.getNumber("Left Climb kP", this.p);
+        // if (this.p != newP) {
+        //     this.p = newP;
+        //     SmartDashboard.putNumber("Left Abs Max Speed from kP", this.p * ClimbConstants.kL2ClimbUpHallSensorValue);
+        // }
         
-        double newAbsMaxSpeed = SmartDashboard.getNumber("Left Abs Max Climb Speed", absMaxSpeed);
-        if (this.absMaxSpeed != newAbsMaxSpeed) {
-            this.absMaxSpeed = newAbsMaxSpeed;
-        }
+        // double newAbsMaxSpeed = SmartDashboard.getNumber("Left Abs Max Climb Speed", absMaxSpeed);
+        // if (this.absMaxSpeed != newAbsMaxSpeed) {
+        //     this.absMaxSpeed = newAbsMaxSpeed;
+        // }
 
         leftError = targetPosition - climber.getLeftEncoderPosition();
         leftSpeed = MathUtil.clamp(
@@ -42,8 +42,8 @@ public class PositionLeftClimb extends CommandBase {
             -ClimbConstants.kAbsoluteMaxSpeed,
             ClimbConstants.kAbsoluteMaxSpeed
         );
-        SmartDashboard.putNumber("Left Climb Error", leftError);
-        SmartDashboard.putNumber("Left Climb Speed", leftSpeed);
+        // SmartDashboard.putNumber("Left Climb Error", leftError);
+        // SmartDashboard.putNumber("Left Climb Speed", leftSpeed);
 
         climber.setLeftClimbMotor(Math.signum(leftError) * 0.40);
 
@@ -57,7 +57,7 @@ public class PositionLeftClimb extends CommandBase {
     @Override
     public boolean isFinished() {
         boolean finished = Math.abs(leftError) < ClimbConstants.kPositionTolerance;
-        SmartDashboard.putBoolean("Left isFinished", finished);
+        // SmartDashboard.putBoolean("Left isFinished", finished);
         return finished;
     }
 }

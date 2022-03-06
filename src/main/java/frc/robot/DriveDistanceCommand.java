@@ -33,21 +33,21 @@ public class DriveDistanceCommand extends CommandBase {
         this.drive.resetEncoders();
         this.drive.getIMU().reset();
 
-        SmartDashboard.putBoolean("runMotors", runMotors);
+        // SmartDashboard.putBoolean("runMotors", runMotors);
 
-        kDistP = SmartDashboard.getNumber("dp", kDistP);
-        kDistI = SmartDashboard.getNumber("di", kDistI);
-        kDistD = SmartDashboard.getNumber("dd", kDistD);
-        kHeadingP = SmartDashboard.getNumber("hp", kHeadingP);
-        kHeadingI = SmartDashboard.getNumber("hi", kHeadingI);
-        kHeadingD = SmartDashboard.getNumber("hd", kHeadingD);
+        // kDistP = SmartDashboard.getNumber("dp", kDistP);
+        // kDistI = SmartDashboard.getNumber("di", kDistI);
+        // kDistD = SmartDashboard.getNumber("dd", kDistD);
+        // kHeadingP = SmartDashboard.getNumber("hp", kHeadingP);
+        // kHeadingI = SmartDashboard.getNumber("hi", kHeadingI);
+        // kHeadingD = SmartDashboard.getNumber("hd", kHeadingD);
 
-        SmartDashboard.putNumber("dp", kDistP);
-        SmartDashboard.putNumber("di", kDistI);
-        SmartDashboard.putNumber("dd", kDistD);
-        SmartDashboard.putNumber("hp", kHeadingP);
-        SmartDashboard.putNumber("hi", kHeadingI);
-        SmartDashboard.putNumber("hd", kHeadingD);
+        // SmartDashboard.putNumber("dp", kDistP);
+        // SmartDashboard.putNumber("di", kDistI);
+        // SmartDashboard.putNumber("dd", kDistD);
+        // SmartDashboard.putNumber("hp", kHeadingP);
+        // SmartDashboard.putNumber("hi", kHeadingI);
+        // SmartDashboard.putNumber("hd", kHeadingD);
 
         leftDistanceController = new PIDController(kDistP, kDistI, kDistD);
         leftDistanceController.setSetpoint(meters);
@@ -65,21 +65,21 @@ public class DriveDistanceCommand extends CommandBase {
         this.drive.resetEncoders();
         this.drive.getIMU().reset();
 
-        SmartDashboard.putBoolean("runMotors", runMotors);
+        // SmartDashboard.putBoolean("runMotors", runMotors);
 
-        kDistP = SmartDashboard.getNumber("dp", kDistP);
-        kDistI = SmartDashboard.getNumber("di", kDistI);
-        kDistD = SmartDashboard.getNumber("dd", kDistD);
-        kHeadingP = SmartDashboard.getNumber("hp", kHeadingP);
-        kHeadingI = SmartDashboard.getNumber("hi", kHeadingI);
-        kHeadingD = SmartDashboard.getNumber("hd", kHeadingD);
+        // kDistP = SmartDashboard.getNumber("dp", kDistP);
+        // kDistI = SmartDashboard.getNumber("di", kDistI);
+        // kDistD = SmartDashboard.getNumber("dd", kDistD);
+        // kHeadingP = SmartDashboard.getNumber("hp", kHeadingP);
+        // kHeadingI = SmartDashboard.getNumber("hi", kHeadingI);
+        // kHeadingD = SmartDashboard.getNumber("hd", kHeadingD);
 
-        SmartDashboard.putNumber("dp", kDistP);
-        SmartDashboard.putNumber("di", kDistI);
-        SmartDashboard.putNumber("dd", kDistD);
-        SmartDashboard.putNumber("hp", kHeadingP);
-        SmartDashboard.putNumber("hi", kHeadingI);
-        SmartDashboard.putNumber("hd", kHeadingD);
+        // SmartDashboard.putNumber("dp", kDistP);
+        // SmartDashboard.putNumber("di", kDistI);
+        // SmartDashboard.putNumber("dd", kDistD);
+        // SmartDashboard.putNumber("hp", kHeadingP);
+        // SmartDashboard.putNumber("hi", kHeadingI);
+        // SmartDashboard.putNumber("hd", kHeadingD);
 
         leftDistanceController = new PIDController(kDistP, kDistI, kDistD);
         leftDistanceController.setSetpoint(target);
@@ -94,77 +94,77 @@ public class DriveDistanceCommand extends CommandBase {
 
     @Override
     public void execute() {
-        SmartDashboard.putNumber("left pos error", leftDistanceController.getPositionError());
-        SmartDashboard.putNumber("right pos error", rightDistanceController.getPositionError());
+        // SmartDashboard.putNumber("left pos error", leftDistanceController.getPositionError());
+        // SmartDashboard.putNumber("right pos error", rightDistanceController.getPositionError());
 
-        double dp = SmartDashboard.getNumber("dp", kDistP);
-        double di = SmartDashboard.getNumber("di", kDistI);
-        double dd = SmartDashboard.getNumber("dd", kDistD);
-        double hp = SmartDashboard.getNumber("hp", kHeadingP);
-        double hi = SmartDashboard.getNumber("hi", kHeadingI);
-        double hd = SmartDashboard.getNumber("hd", kHeadingD);
+        // double dp = SmartDashboard.getNumber("dp", kDistP);
+        // double di = SmartDashboard.getNumber("di", kDistI);
+        // double dd = SmartDashboard.getNumber("dd", kDistD);
+        // double hp = SmartDashboard.getNumber("hp", kHeadingP);
+        // double hi = SmartDashboard.getNumber("hi", kHeadingI);
+        // double hd = SmartDashboard.getNumber("hd", kHeadingD);
 
-        boolean run = SmartDashboard.getBoolean("runMotors", runMotors);
+        // boolean run = SmartDashboard.getBoolean("runMotors", runMotors);
 
-        if (runMotors != run) {
-            runMotors = run;
-            SmartDashboard.putBoolean("runMotors", runMotors);
-        }
+        // if (runMotors != run) {
+        //     runMotors = run;
+        //     SmartDashboard.putBoolean("runMotors", runMotors);
+        // }
 
-        if (kDistP != dp) {
-            kDistP = dp;
-            leftDistanceController.setP(dp);
-            rightDistanceController.setP(dp);
-        }
+        // if (kDistP != dp) {
+        //     kDistP = dp;
+        //     leftDistanceController.setP(dp);
+        //     rightDistanceController.setP(dp);
+        // }
 
-        if (kDistI != di) {
-            kDistI = di;
-            leftDistanceController.setI(di);
-            rightDistanceController.setI(di);
-        }
+        // if (kDistI != di) {
+        //     kDistI = di;
+        //     leftDistanceController.setI(di);
+        //     rightDistanceController.setI(di);
+        // }
 
-        if (kDistD != dd) {
-            kDistD = dd;
-            leftDistanceController.setD(dd);
-            rightDistanceController.setD(dd);
-        }
+        // if (kDistD != dd) {
+        //     kDistD = dd;
+        //     leftDistanceController.setD(dd);
+        //     rightDistanceController.setD(dd);
+        // }
 
-        if (kHeadingP != hp) {
-            kHeadingP = hp;
-            headingController.setP(hp);
-        }
+        // if (kHeadingP != hp) {
+        //     kHeadingP = hp;
+        //     headingController.setP(hp);
+        // }
 
-        if (kHeadingI != hi) {
-            kHeadingI = hi;
-            headingController.setI(hi);
-        }
+        // if (kHeadingI != hi) {
+        //     kHeadingI = hi;
+        //     headingController.setI(hi);
+        // }
 
-        if (kHeadingD != hd) {
-            kHeadingD = hd;
-            headingController.setD(hd);
-        }
+        // if (kHeadingD != hd) {
+        //     kHeadingD = hd;
+        //     headingController.setD(hd);
+        // }
 
         double correction = headingController.calculate(drive.getIMU().getAngle());
 
         double left = leftDistanceController.calculate(drive.getLeftEncoderDistanceMeters());
         double right = rightDistanceController.calculate(drive.getRightEncoderDistanceMeters());
 
-        SmartDashboard.putNumber("left power", left);
-        SmartDashboard.putNumber("right power", right);
-        SmartDashboard.putNumber("correction power", correction);
+        // SmartDashboard.putNumber("left power", left);
+        // SmartDashboard.putNumber("right power", right);
+        // SmartDashboard.putNumber("correction power", correction);
 
         left -= correction;
         right += correction;
 
         if (runMotors) drive.tankDrive(left, right);
 
-        SmartDashboard.putNumber("dp", kDistP);
-        SmartDashboard.putNumber("di", kDistI);
-        SmartDashboard.putNumber("dd", kDistD);
-        SmartDashboard.putNumber("hp", kHeadingP);
-        SmartDashboard.putNumber("hi", kHeadingI);
-        SmartDashboard.putNumber("hd", kHeadingD);
-        SmartDashboard.putBoolean("runMotors", runMotors);
+        // SmartDashboard.putNumber("dp", kDistP);
+        // SmartDashboard.putNumber("di", kDistI);
+        // SmartDashboard.putNumber("dd", kDistD);
+        // SmartDashboard.putNumber("hp", kHeadingP);
+        // SmartDashboard.putNumber("hi", kHeadingI);
+        // SmartDashboard.putNumber("hd", kHeadingD);
+        // SmartDashboard.putBoolean("runMotors", runMotors);
     }
 
     @Override

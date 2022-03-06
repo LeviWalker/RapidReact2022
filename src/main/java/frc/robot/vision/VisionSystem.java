@@ -1,5 +1,7 @@
 package frc.robot.vision;
 
+import com.fasterxml.jackson.databind.ser.std.EnumSerializer;
+
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,7 +26,8 @@ public class VisionSystem extends SubsystemBase {
         } catch (VisionClientException e) {
             e.printStackTrace();
         }
-        this.setLightOff();
+        if (isVisionClientHavingProblems()) this.setLightOff();
+        else this.setLightOn();
     }
 
     /**
@@ -34,18 +37,25 @@ public class VisionSystem extends SubsystemBase {
         return client != null;
     }
     
+    public boolean isVisionClientHavingProblems() {
+        return client == null;
+    }
+    
     /**
-     * @return vision distance value
+     * @return vision distance value; -1 if client is null
      */
     public double getDistance() {
-        return client.getDistance();
+        if (isVisionClientOperational()) return client.getDistance();
+        else return -1;
     }
 
     /**
-     * @return vision angle value
+     * @return vision angle value; -360 if client is null
+     * 
      */
     public double getAngle() {
-        return client.getAngle();
+        if (isVisionClientOperational()) return client.getAngle();
+        else return -360;
     }
 
     /**
@@ -87,9 +97,9 @@ public class VisionSystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (client != null) {
-            SmartDashboard.putNumber("Vision Distance", getDistance());
-            SmartDashboard.putNumber("Vision Angle", getAngle());
-        }
+        // if (client != null) {
+        //     SmartDashboard.putNumber("Vision Distance", getDistance());
+        //     SmartDashboard.putNumber("Vision Angle", getAngle());
+        // }
     }
 }

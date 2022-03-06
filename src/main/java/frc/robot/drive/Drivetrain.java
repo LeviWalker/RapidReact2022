@@ -189,7 +189,7 @@ public class Drivetrain extends SubsystemBase {
     m_drive.feed();
   }
 
-  private double kDriveStraightP = SmartDashboard.getNumber("kDriveStraightP", 0.001);
+  private double kDriveStraightP = 0.001; // SmartDashboard.getNumber("kDriveStraightP", 0.001);
 
   public void driveStraightVolts(double volts) {
 
