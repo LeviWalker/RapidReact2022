@@ -20,6 +20,6 @@ public class TimedShoot extends WaitCommand {
 
     @Override
     public void end(boolean interrupted) {
-        this.shooter.stopFlywheel();
+       this.shooter.stopFlywheel();
     }
 }

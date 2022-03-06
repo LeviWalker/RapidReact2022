@@ -64,7 +64,7 @@ public class RobotContainer {
     }
 
     public CommandBase getAuto() {
-        return new TimedAutoSequence(drivetrain, intake, shooter);
+        return new TimedAutoSequence(drivetrain, intake, indexer, shooter);
     }
 
     public void initRobotCommands() {
@@ -91,17 +91,17 @@ public class RobotContainer {
 
         new JoystickButton(operator, OIConstants.kTriangle)
             .whenPressed(new VisionSpinUpShooter(shooter, vision))
-            .whenHeld(new ShootIndexCommand(shooter, indexer))
+            .whenHeld(new ShootIndexCommand(indexer, shooter))
             .whenReleased(new StopShooter(shooter));
 
         new JoystickButton(operator, OIConstants.kSquare)
             .whenPressed(new SpinUpShooter(shooter, 3650, true))
-            .whenHeld(new ShootIndexCommand(shooter, indexer))
+            .whenHeld(new ShootIndexCommand(indexer, shooter))
             .whenReleased(new StopShooter(shooter));
 
         new JoystickButton(operator, OIConstants.kCircle)
             .whenPressed(new SpinUpShooter(shooter, 4300, false))
-            .whenHeld(new ShootIndexCommand(shooter, indexer))
+            .whenHeld(new ShootIndexCommand(indexer, shooter))
             .whenReleased(new StopShooter(shooter));
 
         // auto shot => 3650

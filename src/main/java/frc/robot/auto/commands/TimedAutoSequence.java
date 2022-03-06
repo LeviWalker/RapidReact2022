@@ -4,20 +4,28 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.drive.Drivetrain;
+import frc.robot.indexer.Indexer;
+import frc.robot.indexer.commands.ShootIndexCommand;
 import frc.robot.intake.Intake;
 import frc.robot.shooter.Shooter;
 
 public class TimedAutoSequence extends SequentialCommandGroup {
     Timer timer;
-    public TimedAutoSequence(Drivetrain drivetrain, Intake intake, Shooter shooter) {
+    public TimedAutoSequence(Drivetrain drivetrain, Intake intake, Indexer indexer, Shooter shooter) {
         super(
-            new TimedShoot(shooter, 1.5),            // 1.5 sec
+            new ParallelRaceGroup(
+                new TimedShoot(shooter, 1.5),
+                new ShootIndexCommand(indexer, shooter)
+            ),   // 1.5 sec
             new ParallelRaceGroup(
                 new TimedDrive(drivetrain, 3, 0.6),
                 new AutoIntake(intake)
             ),                                       // 4.5 sec
             new TimedDrive(drivetrain, 3, -0.6),     // 7.5 sec
-            new TimedShoot(shooter, 1.5)             // 10 sec
+            new ParallelRaceGroup(
+                new TimedShoot(shooter, 1.5),
+                new ShootIndexCommand(indexer, shooter)
+            )                                 // 10 sec
         );
         timer = new Timer();
     }
