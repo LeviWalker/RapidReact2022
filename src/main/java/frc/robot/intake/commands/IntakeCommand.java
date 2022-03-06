@@ -25,9 +25,9 @@ public class IntakeCommand extends CommandBase {
     @Override
     public void execute() {
         intakeAxis = -operator.getRawAxis(OIConstants.kRightYJoystick);
-        if (Math.abs(intakeAxis) > 0.07 && !intake.isDeployed())
+        if (Math.abs(intakeAxis) > 0.30 && !intake.isDeployed())
             intake.deploy();
-        else if (Math.abs(intakeAxis) < 0.07 && intake.isDeployed())
+        else if (Math.abs(intakeAxis) < 0.30 && intake.isDeployed())
             intake.retract();
 
         // if operator wants to intake, clamp input to min and max 

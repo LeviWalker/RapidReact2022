@@ -17,6 +17,7 @@ public class ShootIndexCommand extends CommandBase {
     @Override
     public void execute() {
         if (shooter.isAtTarget()) indexer.shootIndex();
+        else indexer.stopIndex();
     }
 
     @Override

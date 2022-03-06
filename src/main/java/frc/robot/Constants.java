@@ -118,8 +118,14 @@ public class Constants {
         public static final double kDefaultTransferSpeed = 0.40; // TODO Find this
 
         // Tolerances on the flywheel
-        public static final double kVelocityToleranceRPM = 50;
+        public static final double kVelocityToleranceRPM = 40;
         public static final int kMinCount = 4;
+
+        public static final boolean kAutoShotHoodExtended = true;
+		public static final double kAutoShotRPM = 3650;
+
+        public static final boolean kSafeZoneHoodExtended = true;
+		public static final double kSafeZoneRPM = 4300;
     }
 
     public static class ClimbConstants {
@@ -145,13 +151,14 @@ public class Constants {
         
         // Estimated Climb Parameters
         public static final float kL2ClimbDownHallSensorValue = 0.0f;
-        public static final float kL2ClimbUpHallSensorValue = 247.793f;
-        public static final float kClimbSpeedDeadband = 0.02f;
+        public static final float kL2ClimbUpHallSensorValue = 229.77f;
+        public static final float kClimbSpeedDeadband = 0.05f;
         public static final float kErrorAtDeadband = 5f;
         public static final float kAbsoluteMaxSpeed = 0.60f;
         // speed = kP * error => kP = speed / error
         public static final float kP = kClimbSpeedDeadband / kErrorAtDeadband;
-        public static final double kPositionTolerance = 0.5;
+        public static final double kPositionTolerance = 4;
+        public static final int kRatchetSolenoidChannel = 5;
     }
 
     public static class VisionConstants {

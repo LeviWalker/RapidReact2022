@@ -4,9 +4,10 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.climber.Climber;
 
+/**
+ * Inches the climb motors down until they hit the limit switch
+ */
 public class ResetClimbSequence extends SequentialCommandGroup {
-    private Climber climber;
-
     public ResetClimbSequence(Climber climber) {
         super(
             new UnlockClimb(climber),
