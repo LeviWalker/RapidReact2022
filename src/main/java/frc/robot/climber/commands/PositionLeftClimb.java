@@ -36,16 +36,20 @@ public class PositionLeftClimb extends CommandBase {
         //     this.absMaxSpeed = newAbsMaxSpeed;
         // }
 
+        // if error is positive, needs to go in the positive direction
         leftError = targetPosition - climber.getLeftEncoderPosition();
-        leftSpeed = MathUtil.clamp(
-            this.p * leftError,
-            -ClimbConstants.kAbsoluteMaxSpeed,
-            ClimbConstants.kAbsoluteMaxSpeed
-        );
+        // leftSpeed = MathUtil.clamp(
+        //     this.p * leftError,
+        //     -ClimbConstants.kAbsoluteMaxSpeed,
+        //     ClimbConstants.kAbsoluteMaxSpeed
+        // );
         // SmartDashboard.putNumber("Left Climb Error", leftError);
         // SmartDashboard.putNumber("Left Climb Speed", leftSpeed);
 
-        climber.setLeftClimbMotor(Math.signum(leftError) * 0.40);
+        leftSpeed = Math.signum(leftError) * ((Math.abs(leftError) < 20)? 0.40 : ClimbConstants.kAbsoluteMaxSpeed);
+        if (leftSpeed < 0 && climber.isLeftAtBottom()) leftSpeed = 0;
+
+        climber.setLeftClimbMotor(leftSpeed);
 
     }
 

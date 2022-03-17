@@ -8,8 +8,8 @@ public class SmartDashSpinUpShooter extends CommandBase {
     Shooter shooter;
     public SmartDashSpinUpShooter(Shooter shooter) {
         this.shooter = shooter;
-        SmartDashboard.putNumber("RPM", shooter.getFlywheelRPM());
-        SmartDashboard.putBoolean("Hood Extended", shooter.getHoodExtended());
+        // SmartDashboard.putNumber("RPM", shooter.getFlywheelRPM());
+        // SmartDashboard.putBoolean("Hood Extended", shooter.getHoodExtended());
     }
 
     @Override

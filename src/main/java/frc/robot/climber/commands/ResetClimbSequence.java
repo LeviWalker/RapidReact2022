@@ -12,7 +12,7 @@ public class ResetClimbSequence extends SequentialCommandGroup {
         super(
             new UnlockClimb(climber),
             new ParallelCommandGroup(
-                new ResetLeft(climber), 
+                new ResetLeft(climber),
                 new ResetRight(climber)
             ),
             new LockClimb(climber)

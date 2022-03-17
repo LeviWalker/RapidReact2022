@@ -18,9 +18,12 @@ import frc.robot.auto.commands.TimedAutoSequence;
 import frc.robot.climber.Climber;
 import frc.robot.climber.commands.*;
 import frc.robot.drive.Drivetrain;
+import frc.robot.drive.commands.DrivetrainCharacterization;
 import frc.robot.drive.commands.HighGear;
 import frc.robot.drive.commands.JoystickDrive;
 import frc.robot.drive.commands.LowGear;
+import frc.robot.drive.commands.RegularDrive;
+import frc.robot.drive.commands.SlowDrive;
 import frc.robot.indexer.Indexer;
 import frc.robot.indexer.commands.*;
 import frc.robot.intake.Intake;
@@ -28,7 +31,7 @@ import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.shooter.Shooter;
 import frc.robot.shooter.commands.*;
 import frc.robot.vision.VisionSystem;
-import frc.robot.vision.commands.VisionOff;
+import frc.robot.vision.commands.*;
 
 public class RobotContainer {
     Drivetrain drivetrain;
@@ -65,6 +68,7 @@ public class RobotContainer {
 
     public CommandBase getAuto() {
         return new TimedAutoSequence(drivetrain, intake, indexer, shooter);
+        // return new DrivetrainCharacterization(drivetrain);
     }
 
     public void initRobotCommands() {
@@ -89,6 +93,10 @@ public class RobotContainer {
             .whenPressed(new HighGear(drivetrain))
             .whenReleased(new LowGear(drivetrain));
 
+        new JoystickButton(driver, OIConstants.kX)
+            .whenPressed(new SlowDrive(drivetrain))
+            .whenReleased(new RegularDrive(drivetrain));
+
         // new JoystickButton(operator, OIConstants.kTriangle) // throws IllegalArgumentException
         //     .whenPressed(new VisionShootSequence(shooter, vision))
         //     .whenHeld(new ShootIndexCommand(indexer, shooter))
@@ -100,7 +108,12 @@ public class RobotContainer {
             .whenReleased(new StopShooter(shooter));
 
         new JoystickButton(operator, OIConstants.kCircle)
-            .whenPressed(new SpinUpShooter(shooter, 4300, false))
+            .whenPressed(new SpinUpShooter(shooter, 4000, false)) //was 4300
+            .whenHeld(new ShootIndexCommand(indexer, shooter))
+            .whenReleased(new StopShooter(shooter));
+
+        new JoystickButton(operator, OIConstants.kX)
+            .whenPressed(new SpinUpShooter(shooter, 4500, false))
             .whenHeld(new ShootIndexCommand(indexer, shooter))
             .whenReleased(new StopShooter(shooter));
 
@@ -113,10 +126,12 @@ public class RobotContainer {
 
         new POVButton(operator, 0).whenPressed(new ResetClimbSequence(climber));
 
+        new POVButton(operator, 180).whenPressed(new VisionOn(vision)).whenReleased(new VisionOff(vision));
+
         new JoystickButton(operator, OIConstants.kShare)
-            .whenPressed(new L2ClimbUpSequence(climber, operator));
+            .whenPressed(new L2ClimbUp(climber));
         new JoystickButton(operator, OIConstants.kOptions)
-            .whenPressed(new L2ClimbDownSequence(climber, operator));
+            .whenPressed(new L2ClimbDown(climber));
         // new JoystickButton(operator, OIConstants.kSquare).whenPressed(new StopClimb(climber));
 
         // new JoystickButton(operator)

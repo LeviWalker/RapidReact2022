@@ -1,6 +1,8 @@
 package frc.robot.util.control;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.MathUtil;
@@ -25,6 +27,8 @@ public class NKTalonFX extends WPI_TalonFX implements NKTunableMotorBase {
     public NKTalonFX(int deviceNumber) {
         super(deviceNumber);
         m_id = deviceNumber;
+        super.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+        
     }
 
     @Override
@@ -56,7 +60,7 @@ public class NKTalonFX extends WPI_TalonFX implements NKTunableMotorBase {
     }
 
     public double getPosition() {
-        return super.getSensorCollection().getIntegratedSensorPosition();
+        return super.getSelectedSensorPosition();
     }
 
     public double getPositionRotations() {
@@ -72,19 +76,23 @@ public class NKTalonFX extends WPI_TalonFX implements NKTunableMotorBase {
     }
 
     public double getVelocity() {
-        return super.getSensorCollection().getIntegratedSensorVelocity();
+        return super.getSelectedSensorVelocity();
     }
 
     public double getVelocityRPM() {
         return ticksPer100MillisecondsToRPM(this.getVelocity());
     }
 
-    public void resetPosition() {
-        this.setPosition(0, 0);
+    public ErrorCode resetPosition() {
+        return this.setPosition(0, 0);
     }
 
-    public void setPosition(double newPosition, int timeoutMs) {
-        super.getSensorCollection().setIntegratedSensorPosition(newPosition, timeoutMs);
+    public ErrorCode setPosition(double newPosition, int timeoutMs) {
+        return super.setSelectedSensorPosition(newPosition, 0, timeoutMs);
+    }
+
+    public ErrorCode setPosition(double newPosition, int pidSlot, int timeoutMs) {
+        return super.setSelectedSensorPosition(newPosition, pidSlot, timeoutMs);
     }
 
     @Override

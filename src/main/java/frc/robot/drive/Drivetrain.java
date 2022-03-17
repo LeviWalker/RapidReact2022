@@ -6,17 +6,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.controller.*;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.math.trajectory.*;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -38,12 +31,18 @@ public class Drivetrain extends SubsystemBase {
 
   private SupplyCurrentLimitConfiguration currentLimitConfiguration;
 
-  private final DifferentialDrive m_drive;
+  private final DifferentialDrive drive;
 
   private AHRS imu;
 
   // Odometry class for tracking robot pose
-  private final DifferentialDriveOdometry m_odometry;
+  private final DifferentialDriveOdometry odometry;
+
+  private PIDController leftPID, rightPID;
+  private SimpleMotorFeedforward leftFF, rightFF;
+
+  private double maxThrottle = DriveConstants.kRegularMaxThrottle,
+                 maxTurn = DriveConstants.kRegularMaxTurn;
 
   /** Creates a new DriveSubsystem. */
   public Drivetrain() {
@@ -85,13 +84,19 @@ public class Drivetrain extends SubsystemBase {
     rightFront.configSupplyCurrentLimit(currentLimitConfiguration);
     rightRear.configSupplyCurrentLimit(currentLimitConfiguration);
 
-    m_drive = new DifferentialDrive(leftMaster, rightMaster);
-    m_drive.setSafetyEnabled(false);
+    drive = new DifferentialDrive(leftMaster, rightMaster);
+    drive.setSafetyEnabled(false);
 
     imu = new AHRS(SPI.Port.kMXP);
 
     resetEncoders();
-    m_odometry = new DifferentialDriveOdometry(imu.getRotation2d());
+    odometry = new DifferentialDriveOdometry(imu.getRotation2d());
+
+    leftPID = new PIDController(0, 0, 0);
+    rightPID = new PIDController(0, 0, 0);
+
+    leftFF = new SimpleMotorFeedforward(0, 0, 0);
+    rightFF = new SimpleMotorFeedforward(0, 0, 0);
   }
 
   public void setHighGear(boolean highGear) {
@@ -103,11 +108,11 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public DifferentialDrive getDifferentialDrive() {
-    return m_drive;
+    return drive;
   }
 
   public DifferentialDriveOdometry getOdometry() {
-    return m_odometry;
+    return odometry;
   }
 
   public AHRS getIMU() {
@@ -118,10 +123,16 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     // Update the odometry in the periodic block
     updateOdometry();
+
+    // SmartDashboard.putNumber("left meters", getLeftEncoderDistanceMeters());
+    // SmartDashboard.putNumber("right meters", getRightEncoderDistanceMeters());
+
+    // SmartDashboard.putNumber("left m/s", getLeftEncoderVelocityMetersPerSecond());
+    // SmartDashboard.putNumber("right m/s", getRightEncoderVelocityMetersPerSecond());
   }
 
   public void updateOdometry() {
-    m_odometry.update(
+    odometry.update(
         imu.getRotation2d(),
         this.getLeftEncoderDistanceMeters(),
         this.getRightEncoderDistanceMeters()
@@ -134,7 +145,7 @@ public class Drivetrain extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    return odometry.getPoseMeters();
   }
 
   /**
@@ -156,7 +167,12 @@ public class Drivetrain extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
-    m_odometry.resetPosition(pose, imu.getRotation2d());
+    odometry.resetPosition(pose, imu.getRotation2d());
+  }
+
+  public void setMaxSpeeds(double throttle, double turn) {
+    maxThrottle = throttle;
+    maxTurn = turn;
   }
 
   /**
@@ -165,16 +181,26 @@ public class Drivetrain extends SubsystemBase {
    * @param fwd the commanded forward movement
    * @param rot the commanded rotation
    */
-  public void arcadeDrive(double fwd, double rot) {
-    m_drive.arcadeDrive(fwd, rot);
+  public void autoPercentArcadeDrive(double throttle, double turn) {
+    drive.arcadeDrive(throttle, turn);
   }
 
-  public void curveDrive(double fwd, double rot) {
-    m_drive.curvatureDrive(fwd, rot, true);
+  /**
+   * Drives the robot using arcade controls.
+   *
+   * @param fwd the commanded forward movement
+   * @param rot the commanded rotation
+   */
+  public void arcadeDrive(double throttle, double turn) {
+    drive.arcadeDrive(maxThrottle * throttle, maxTurn * turn);
+  }
+
+  public void curveDrive(double throttle, double turn) {
+    drive.curvatureDrive(maxThrottle * throttle, maxTurn * turn, true);
   }
 
   public void tankDrive(double l, double r) {
-    m_drive.tankDrive(l, r, false);
+    drive.tankDrive(l, r, false);
   }
 
   /**
@@ -186,7 +212,7 @@ public class Drivetrain extends SubsystemBase {
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     leftMaster.setVoltage(leftVolts);
     rightMaster.setVoltage(rightVolts);
-    m_drive.feed();
+    // drive.feed();
   }
 
   private double kDriveStraightP = 0.001; // SmartDashboard.getNumber("kDriveStraightP", 0.001);
@@ -199,6 +225,12 @@ public class Drivetrain extends SubsystemBase {
 
     leftMaster.setVoltage(volts + ((volts > 0) ? correction : -correction));
     rightMaster.setVoltage(volts);
+  }
+
+  public void tankDriveMetersPerSecond(double left, double right) {
+    // TODO Implement characterization
+    leftMaster.setVoltage(leftFF.calculate(left));
+    rightMaster.setVoltage(rightFF.calculate(right));
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
@@ -222,14 +254,13 @@ public class Drivetrain extends SubsystemBase {
    * @param maxOutput the maximum output to which the drive will be constrained
    */
   public void setMaxOutput(double maxOutput) {
-    m_drive.setMaxOutput(maxOutput);
+    drive.setMaxOutput(maxOutput);
   }
 
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
     imu.reset();
   }
-
   /**
    * Returns the heading of the robot.
    *
@@ -263,8 +294,6 @@ public class Drivetrain extends SubsystemBase {
   public double getRightEncoderVelocityMetersPerSecond() {
     return this.rightMaster.getVelocityRPM() * DriveConstants.kRotationsToMetersConversion / 60;
   }
-
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -306,20 +335,12 @@ public class Drivetrain extends SubsystemBase {
     );
 
     RamseteCommand ramseteCommand = new RamseteCommand(
-        exampleTrajectory,
-        this::getPose,
-        new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
-        new SimpleMotorFeedforward(
-            DriveConstants.ksVolts,
-            DriveConstants.kvVoltSecondsPerMeter,
-            DriveConstants.kaVoltSecondsSquaredPerMeter),
-        DriveConstants.kDriveKinematics,
-        this::getWheelSpeeds,
-        new PIDController(DriveConstants.kPDriveVel, 0, 0),
-        new PIDController(DriveConstants.kPDriveVel, 0, 0),
-        // RamseteCommand passes volts to the callback
-        this::tankDriveVolts,
-        this
+      exampleTrajectory,
+      this::getPose,
+      new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
+      DriveConstants.kDriveKinematics,
+      this::tankDriveMetersPerSecond, // in case the ff constants differ
+      this
     );
 
     // Reset odometry to the starting pose of the trajectory.

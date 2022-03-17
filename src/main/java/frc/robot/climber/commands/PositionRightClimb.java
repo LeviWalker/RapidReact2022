@@ -37,17 +37,18 @@ public class PositionRightClimb extends CommandBase {
         // }
         
         rightError = targetPosition - climber.getRightEncoderPosition();
-        rightSpeed = MathUtil.clamp(
-            this.p * rightError,
-            -ClimbConstants.kAbsoluteMaxSpeed,
-            ClimbConstants.kAbsoluteMaxSpeed
-        );
+        // rightSpeed = MathUtil.clamp(
+        //     this.p * rightError,
+        //     -ClimbConstants.kAbsoluteMaxSpeed,
+        //     ClimbConstants.kAbsoluteMaxSpeed
+        // );
         // SmartDashboard.putNumber("Right Climb Error", rightError);
         // SmartDashboard.putNumber("Right Climb Speed", rightSpeed);
-        
-        if (rightSpeed < 0 && climber.isRightAtBottom()) rightSpeed = 0;
 
-        climber.setRightClimbMotor(Math.signum(rightError) * 0.40);
+        rightSpeed = Math.signum(rightError) * ((Math.abs(rightError) < 20)? 0.40 : ClimbConstants.kAbsoluteMaxSpeed);
+        if (rightSpeed < 0 && climber.isLeftAtBottom()) rightSpeed = 0;
+
+        climber.setRightClimbMotor(rightSpeed);
     }
 
     @Override

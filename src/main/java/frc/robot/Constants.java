@@ -24,8 +24,13 @@ public class Constants {
     
         public static final int kGearShifterChannel = 4;
 
+        public static final double kRegularMaxThrottle = 0.70;
+        public static final double kRegularMaxTurn = 0.60;
+        public static final double kSlowMaxThrottle = 0.50;
+        public static final double kSlowMaxTurn = 0.40;
+
         // how much faster are the drive wheels going than the motors?
-        public static final double kGearRatio = 9.07; // 16.91; // low gear
+        public static final double kGearRatio = 16.91; // 9.07; // high gear
         public static final double kWheelDiameterInches = 6;
         public static final double kInchesToMeters = 0.0254;
         public static final double kRotationsToMetersConversion = Math.PI * kWheelDiameterInches * kInchesToMeters / kGearRatio;
@@ -152,9 +157,9 @@ public class Constants {
         // Estimated Climb Parameters
         public static final float kL2ClimbDownHallSensorValue = 0.0f;
         public static final float kL2ClimbUpHallSensorValue = 229.77f;
-        public static final float kClimbSpeedDeadband = 0.05f;
-        public static final float kErrorAtDeadband = 5f;
-        public static final float kAbsoluteMaxSpeed = 0.60f;
+        public static final float kClimbSpeedDeadband = 0.07f;
+        public static final float kErrorAtDeadband = 3f;
+        public static final float kAbsoluteMaxSpeed = 0.70f;
         // speed = kP * error => kP = speed / error
         public static final float kP = kClimbSpeedDeadband / kErrorAtDeadband;
         public static final double kPositionTolerance = 4;
