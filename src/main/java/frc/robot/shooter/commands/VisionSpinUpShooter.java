@@ -6,20 +6,13 @@ import java.util.Map;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.shooter.Shooter;
+import frc.robot.util.math.DoubleInterpolater;
 import frc.robot.vision.VisionSystem;
 
 public class VisionSpinUpShooter extends InstantCommand {
 
-    private static final Map<Double, Double> calibration = new HashMap<>();
+    private static DoubleInterpolater rpmInterpolater, angleInterpolater;
 
-    static {
-        calibration.put(9.5, 3900.);
-        calibration.put(9.7, 3900.);
-        calibration.put(13.2, 4300.);
-        calibration.put(14.2, 4300.);
-        calibration.put(16.6, 5200.);
-    }
-    
     public VisionSpinUpShooter(Shooter shooter, VisionSystem vision) {
         super(() -> {
             shooter.setFlywheelRPM(calculateRPM(vision.getDistance()));
@@ -37,22 +30,23 @@ public class VisionSpinUpShooter extends InstantCommand {
         return rpm;
     }
 
-    private static double linearInterpolation(double distance) {
-        double retVal;
-        Double[] keys = (Double[]) calibration.keySet().toArray();
-        Double[] vals = (Double[]) calibration.keySet().toArray();
-        int i = 0;
-        for (i = 0; i < keys.length; i++) {
-            if (distance <= keys[i]) break;
-        }
+    private static double rpm(double distance) {
+        rpmInterpolater = new DoubleInterpolater()
+            .add(0, 0)
+            .add(0, 0)
+            .add(0, 0)
+            .add(0, 0)
+            .add(0, 0);
+        return rpmInterpolater.interpolate(distance);
+    }
 
-        if (i == keys.length - 1)
-            retVal = vals[i];
-        else
-        //           intercept                      slope                              difference  
-            retVal = vals[i] + ((vals[i + 1] - vals[i])/(keys[i + 1] - keys[i])) * (distance - keys[i]);
-        
-
-        return MathUtil.clamp(retVal, 3900, 5200);
+    private static double angle() {
+        angleInterpolater = new DoubleInterpolater()
+            .add(0, 0)
+            .add(0, 0)
+            .add(0, 0)
+            .add(0, 0)
+            .add(0, 0);
+        return 0;
     }
 }

@@ -280,19 +280,19 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getLeftEncoderDistanceMeters() {
-    return -this.leftMaster.getPositionRotations() * DriveConstants.kRotationsToMetersConversion;
+    return -this.leftMaster.getPositionRotations() * DriveConstants.kLowGearRotationsToMetersConversion;
   }
 
   public double getRightEncoderDistanceMeters() {
-    return this.rightMaster.getPositionRotations() * DriveConstants.kRotationsToMetersConversion;
+    return this.rightMaster.getPositionRotations() * DriveConstants.kLowGearRotationsToMetersConversion;
   }
 
   public double getLeftEncoderVelocityMetersPerSecond() {
-      return -this.leftMaster.getVelocityRPM() * DriveConstants.kRotationsToMetersConversion / 60;
+      return -this.leftMaster.getVelocityRPM() * DriveConstants.kLowGearRotationsToMetersConversion / 60;
   }
 
   public double getRightEncoderVelocityMetersPerSecond() {
-    return this.rightMaster.getVelocityRPM() * DriveConstants.kRotationsToMetersConversion / 60;
+    return this.rightMaster.getVelocityRPM() * DriveConstants.kLowGearRotationsToMetersConversion / 60;
   }
 
   /**

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -63,7 +64,7 @@ public class RobotContainer {
         intake.setDefaultCommand(new IntakeCommand(intake, indexer, operator));
         indexer.setDefaultCommand(new IntakeIndexCommand(intake, indexer));
 
-        // new VisionOff(vision).schedule();
+        
     }
 
     public CommandBase getAuto() {
@@ -78,11 +79,9 @@ public class RobotContainer {
         );
         visionOffSeq.schedule();
         Shuffleboard.getTab("Vision").addBoolean("is client good?", vision::isVisionClientOperational);
-        Shuffleboard.getTab("Vision").addBoolean("is code working???", visionOffSeq::isScheduled);
     }
 
     public void periodic() {
-        if (Timer.getFPGATimestamp() == 0.20) vision.setLightOff();
     }
     
     public void configureButtonBindings() {
@@ -102,27 +101,39 @@ public class RobotContainer {
         //     .whenHeld(new ShootIndexCommand(indexer, shooter))
         //     .whenReleased(new StopShooter(shooter));
 
-        new JoystickButton(operator, OIConstants.kSquare)
-            .whenPressed(new SpinUpShooter(shooter, 3650, true))
-            .whenHeld(new ShootIndexCommand(indexer, shooter))
-            .whenReleased(new StopShooter(shooter));
+        // new JoystickButton(operator, OIConstants.kSquare)
+        //     .whenPressed(new SpinUpShooter(shooter, 3500, true))
+        //     .whenHeld(new ShootIndexCommand(indexer, shooter))
+        //     .whenReleased(new StopShooter(shooter));
 
-        new JoystickButton(operator, OIConstants.kCircle)
-            .whenPressed(new SpinUpShooter(shooter, 4000, false)) //was 4300
-            .whenHeld(new ShootIndexCommand(indexer, shooter))
-            .whenReleased(new StopShooter(shooter));
+        // new JoystickButton(operator, OIConstants.kCircle)
+        //     .whenPressed(new SpinUpShooter(shooter, 4000, false)) //was 4300
+        //     .whenHeld(new ShootIndexCommand(indexer, shooter))
+        //     .whenReleased(new StopShooter(shooter));
 
         new JoystickButton(operator, OIConstants.kX)
-            .whenPressed(new SpinUpShooter(shooter, 4500, false))
-            .whenHeld(new ShootIndexCommand(indexer, shooter))
-            .whenReleased(new StopShooter(shooter));
+            .whileHeld(
+                new ParallelCommandGroup(
+                    new SmartDashShooter(shooter, false),
+                    new ShootIndexCommand(indexer, shooter)
+                )
+            ).whenReleased(new StopShooter(shooter));
+
+        new JoystickButton(operator, OIConstants.kCircle)
+            .whileHeld(
+                new ParallelCommandGroup(
+                    new SmartDashShooter(shooter, true),
+                    new ShootIndexCommand(indexer, shooter)
+                )
+            ).whenReleased(new StopShooter(shooter));
+
+
+            // TODO Change close to 3500
 
         // auto shot => 3650
         // safe shot => 4300
         // min vision shot => 3900
         // max vision shot => 5200
-
-        // new JoystickButton(operator, OIConstants.kX).whenPressed(new ResetClimbSequence(climber));
 
         new POVButton(operator, 0).whenPressed(new ResetClimbSequence(climber));
 
@@ -132,57 +143,5 @@ public class RobotContainer {
             .whenPressed(new L2ClimbUp(climber));
         new JoystickButton(operator, OIConstants.kOptions)
             .whenPressed(new L2ClimbDown(climber));
-        // new JoystickButton(operator, OIConstants.kSquare).whenPressed(new StopClimb(climber));
-
-        // new JoystickButton(operator)
-        
-        /**
-         * Controls:
-         * 
-         *   Driver:
-         *      Right trigger -> drive forward
-         *      Left trigger -> drive backwards
-         *      Left X -> turning
-         *      Square -> hold for high drive gear, default should be low gear
-         * 
-         *   Operator:
-         *      Right Y Axis -> Intake
-         *          Pull towards you to deploy and intake
-         *          Push away to deploy and outtake
-         *      Square -> Close shot in high goal
-         *      Circle -> Safe Zone in high goal
-         *      POV top -> Reset Climb to limit switches
-         *      Share -> Climb Up
-         *      Options -> Climb Down
-         * 
-         * 
-         *    Testing:
-         *      Triangle -> Shooting
-         *          To use this, open Shuffleboard and set
-         *          the SmartDashboard/RPM tab and
-         *          SmartDashboard/Hood Extended. Then, press
-         *          and hold the triangle button. Both the
-         *          target flywheel rpm and the hood position
-         *          should be set to whatever is on Shuffleboard.
-         *          Extended Hood as true correlates to the steeper
-         *          shooting angle. To find the SmartDashboard tabs
-         *          on Shuffleboard, you may have to open the dialog
-         *          on the left side of the application (if not
-         *          already open). Once you have opened the dialog,
-         *          make sure you have selected the "Sources" option.
-         *          You should see two dropdowns below. Select the
-         *          one named "NetworkTables". If connected to the
-         *          robot, you should see more dropdowns underneath.
-         *          Find the one that is labeled SmartDashboard
-         *          (should be near the bottom of the NetworkTables
-         *          sections) and look beneath it to find RPM and
-         *          Hood Extended. Please note that these values
-         *          should only take effect in the robot program
-         *          after you have pressed and held the triangle
-         *          button. I recommend that you start with a low
-         *          RPM of about 1000 and increase/decrease from
-         *          there (especially because of the new super
-         *          grippy flywheel).
-         */
     }
 }

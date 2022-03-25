@@ -1,9 +1,16 @@
 package frc.robot.shooter;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.shooter.commands.RunShooter;
+import frc.robot.shooter.commands.StopShooter;
 import frc.robot.util.control.NKDoubleSolenoid;
 import frc.robot.util.control.NKTalonFX;
 

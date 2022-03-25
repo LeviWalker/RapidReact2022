@@ -1,7 +1,5 @@
 package frc.robot.vision;
 
-import com.fasterxml.jackson.databind.ser.std.EnumSerializer;
-
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
