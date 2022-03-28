@@ -44,6 +44,8 @@ public class Drivetrain extends SubsystemBase {
   private double maxThrottle = DriveConstants.kRegularMaxThrottle,
                  maxTurn = DriveConstants.kRegularMaxTurn;
 
+  private double kP = 0, kF = 0;
+
   /** Creates a new DriveSubsystem. */
   public Drivetrain() {
     gear = new NKSolenoid(Constants.kPH, Constants.kPHType, DriveConstants.kGearShifterChannel);
@@ -97,10 +99,21 @@ public class Drivetrain extends SubsystemBase {
 
     leftFF = new SimpleMotorFeedforward(0, 0, 0);
     rightFF = new SimpleMotorFeedforward(0, 0, 0);
+
+    putPF();
+  }
+
+  public void reset() {
+    leftMaster.setSelectedSensorPosition(0);
+    rightMaster.setSelectedSensorPosition(0);
   }
 
   public void setHighGear(boolean highGear) {
     gear.set(highGear);
+  }
+
+  public boolean isInHighGear() {
+    return gear.get();
   }
 
   public void toggleGear() {
@@ -124,19 +137,42 @@ public class Drivetrain extends SubsystemBase {
     // Update the odometry in the periodic block
     updateOdometry();
 
-    // SmartDashboard.putNumber("left meters", getLeftEncoderDistanceMeters());
-    // SmartDashboard.putNumber("right meters", getRightEncoderDistanceMeters());
+    SmartDashboard.putNumber("left feet", getLeftEncoderDistanceFeet());
+    SmartDashboard.putNumber("right feet", getRightEncoderDistanceFeet());
 
-    // SmartDashboard.putNumber("left m/s", getLeftEncoderVelocityMetersPerSecond());
-    // SmartDashboard.putNumber("right m/s", getRightEncoderVelocityMetersPerSecond());
+    SmartDashboard.putNumber("left fps", getLeftEncoderVelocityFeetPerSecond());
+    SmartDashboard.putNumber("right fps", getRightEncoderVelocityFeetPerSecond());
+
+    double p = SmartDashboard.getNumber("drive p", kP);
+    if (p != kP) {
+      kP = p;
+      leftMaster.setP(0, p);
+    }
+
+    double f = SmartDashboard.getNumber("drive f", kF);
+    if (f != kF) {
+      kF = f;
+      leftMaster.setF(0, f);
+    }
+
+    putPF();
   }
+
+  private void putPF() {
+    SmartDashboard.putNumber("drive p", kP);
+    SmartDashboard.putNumber("drive f", kF);
+  }
+
 
   public void updateOdometry() {
     odometry.update(
         imu.getRotation2d(),
-        this.getLeftEncoderDistanceMeters(),
-        this.getRightEncoderDistanceMeters()
+        this.getLeftEncoderDistanceFeet(),
+        this.getRightEncoderDistanceFeet()
     );
+    SmartDashboard.putNumber("x", odometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("y", odometry.getPoseMeters().getY());
+    SmartDashboard.putNumber("theta", odometry.getPoseMeters().getRotation().getDegrees());
   }
 
   /**
@@ -155,8 +191,8 @@ public class Drivetrain extends SubsystemBase {
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(
-        this.getLeftEncoderVelocityMetersPerSecond(),
-        this.getRightEncoderVelocityMetersPerSecond()
+        this.getLeftEncoderVelocityFeetPerSecond(),
+        this.getRightEncoderVelocityFeetPerSecond()
     );
   }
 
@@ -295,6 +331,29 @@ public class Drivetrain extends SubsystemBase {
     return this.rightMaster.getVelocityRPM() * DriveConstants.kLowGearRotationsToMetersConversion / 60;
   }
 
+  public double getLeftEncoderDistanceFeet() {
+    return this.leftMaster.getPositionRotations() *
+      (this.isInHighGear()? DriveConstants.kHighGearRotationsToFeetConversion 
+      : DriveConstants.kLowGearRotationsToFeetConversion);
+  }
+
+  public double getRightEncoderDistanceFeet() {
+    return this.rightMaster.getPositionRotations() * (this.isInHighGear()? DriveConstants.kHighGearRotationsToFeetConversion : DriveConstants.kLowGearRotationsToFeetConversion);
+  }
+
+  public double getLeftEncoderVelocityFeetPerSecond() {
+    return this.leftMaster.getVelocityRPM() * (this.isInHighGear()? DriveConstants.kHighGearRotationsToFeetConversion : DriveConstants.kLowGearRotationsToFeetConversion) / 60;
+  }
+
+  public double getRightEncoderVelocityFeetPerSecond() {
+    return this.rightMaster.getVelocityRPM() * (this.isInHighGear()? DriveConstants.kHighGearRotationsToFeetConversion : DriveConstants.kLowGearRotationsToFeetConversion) / 60;
+  }
+
+  public void tankDriveFPS(double leftFPS, double rightFPS) {
+    leftMaster.setVelocityRPM(leftFPS * 60 / (this.isInHighGear()? DriveConstants.kHighGearRotationsToFeetConversion : DriveConstants.kLowGearRotationsToFeetConversion));
+    rightMaster.setVelocityRPM(rightFPS * 60 / (this.isInHighGear()? DriveConstants.kHighGearRotationsToFeetConversion : DriveConstants.kLowGearRotationsToFeetConversion));
+  }
+  
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

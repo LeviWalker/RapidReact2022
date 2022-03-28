@@ -32,13 +32,17 @@ public class Constants {
         // how much faster are the drive wheels going than the motors?
         public static final double kHighGearRatio = 9.07;
         public static final double kLowGearRatio = 16.91;
-        public static final double kWheelDiameterInches = 6;
+        public static final double kWheelDiameterInches = (6.0 * 7.0 / 8.0);
         public static final double kInchesToMeters = 0.0254;
         public static final double kLowGearRotationsToMetersConversion = Math.PI * kWheelDiameterInches * kInchesToMeters / kLowGearRatio;
         public static final double kHighGearRotationsToMetersConversion = Math.PI * kWheelDiameterInches * kInchesToMeters / kHighGearRatio;
+
+        public static final double kLowGearRotationsToFeetConversion = Math.PI * kWheelDiameterInches /(12 * kLowGearRatio);
+        public static final double kHighGearRotationsToFeetConversion = Math.PI * kWheelDiameterInches /(12 * kHighGearRatio);
     
-        public static final double kTrackWidthMeters = 1.0; // TODO Find out with SysId?
-        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidthMeters);
+        // public static final double kTrackWidthMeters = 2.5;
+        public static final double kTrackwidth = 22.75 / 12;
+        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidth);
         public static final double kMaxSpeedMetersPerSecond = 0; // TODO math // jvn
         public static final double kMaxAccelerationMetersPerSecondSquared = 0; // TODO math // jvn
     

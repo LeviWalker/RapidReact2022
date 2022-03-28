@@ -1,5 +1,17 @@
 package frc.robot;
 
+import java.util.ArrayList;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.constraint.DifferentialDriveKinematicsConstraint;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -14,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.auto.commands.TimedAutoSequence;
 import frc.robot.climber.Climber;
@@ -68,7 +81,37 @@ public class RobotContainer {
     }
 
     public CommandBase getAuto() {
-        return new TimedAutoSequence(drivetrain, intake, indexer, shooter);
+        drivetrain.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+        Pose2d start = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
+        Pose2d end = new Pose2d(10, 0, Rotation2d.fromDegrees(45));
+
+        var interiorWaypoints = new ArrayList<Translation2d>();
+        // interiorWaypoints.add(new Translation2d(Units.feetToMeters(14.54), Units.feetToMeters(23.23)));
+        // interiorWaypoints.add(new Translation2d(Units.feetToMeters(21.04), Units.feetToMeters(18.23)));
+
+        TrajectoryConfig config = new TrajectoryConfig(6.5, 4);
+        config.addConstraint(new DifferentialDriveKinematicsConstraint(DriveConstants.kDriveKinematics, 5));
+
+        var trajectory = TrajectoryGenerator.generateTrajectory(
+            start,
+            interiorWaypoints,
+            end,
+            config);
+
+        final double kP = 0.31;
+
+        return new RamseteCommand(
+            trajectory, 
+            drivetrain::getPose, 
+            new RamseteController(), 
+            new SimpleMotorFeedforward(0.5, 1.388, 0), 
+            DriveConstants.kDriveKinematics, 
+            drivetrain::getWheelSpeeds,
+            new PIDController(kP, 0, 0), 
+            new PIDController(kP, 0, 0), 
+            drivetrain::tankDriveVolts, 
+            drivetrain);
+        // return new TimedAutoSequence(drivetrain, intake, indexer, shooter);
         // return new DrivetrainCharacterization(drivetrain);
     }
 
@@ -81,7 +124,12 @@ public class RobotContainer {
         Shuffleboard.getTab("Vision").addBoolean("is client good?", vision::isVisionClientOperational);
     }
 
+    public void autoInit() {
+        drivetrain.reset();
+    }
+
     public void periodic() {
+
     }
     
     public void configureButtonBindings() {
@@ -126,6 +174,8 @@ public class RobotContainer {
                     new ShootIndexCommand(indexer, shooter)
                 )
             ).whenReleased(new StopShooter(shooter));
+
+        new POVButton(driver, 90).whenPressed(drivetrain::reset);
 
 
             // TODO Change close to 3500
