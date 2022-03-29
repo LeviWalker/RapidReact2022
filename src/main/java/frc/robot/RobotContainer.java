@@ -126,6 +126,11 @@ public class RobotContainer {
 
     public void autoInit() {
         drivetrain.reset();
+        if (vision.isVisionClientHavingProblems()) vision.initClient();
+    }
+
+    public void teleopInit() {
+        if (vision.isVisionClientHavingProblems()) vision.initClient();
     }
 
     public void periodic() {

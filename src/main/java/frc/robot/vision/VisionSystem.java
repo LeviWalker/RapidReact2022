@@ -12,10 +12,23 @@ public class VisionSystem extends SubsystemBase {
      * TCP client
      */
     private VisionClient client;
+    /**
+     * PDH copy so we can manage the vision light from here
+     */
     private PowerDistribution pdh;
 
     public VisionSystem(PowerDistribution pdh) {
         this.pdh = pdh;
+        this.initClient();
+        this.setLightOff();
+        // if (isVisionClientHavingProblems()) this.setLightOff();
+        // else this.setLightOn();
+    }
+
+    /**
+     * Will attempt to initialize the vision client
+     */
+    public void initClient() {
         try {
             client = new VisionClient(VisionConstants.kVisionIPAddress, VisionConstants.kVisionPort);
             client.start(); // start vision client thread
@@ -24,18 +37,18 @@ public class VisionSystem extends SubsystemBase {
         } catch (VisionClientException e) {
             e.printStackTrace();
         }
-        this.setLightOff();
-        // if (isVisionClientHavingProblems()) this.setLightOff();
-        // else this.setLightOn();
     }
 
     /**
-     * @return if the client is null
+     * @return if the client is not null
      */
     public boolean isVisionClientOperational() {
         return client != null;
     }
     
+    /**
+     * @return if the client is null
+     */
     public boolean isVisionClientHavingProblems() {
         return client == null;
     }
@@ -72,17 +85,23 @@ public class VisionSystem extends SubsystemBase {
     }
     
     /**
-     * Sets the value of the light
+     * Sets the value of the vision light rings
      * @param on true for light on
      */
     public void setLight(boolean on) {
         pdh.setSwitchableChannel(on);
     }
 
+    /**
+     * Turns the blinders (vision light rings) off
+     */
     public void setLightOff() {
         pdh.setSwitchableChannel(false);
     }
 
+    /**
+     * Turns the blinders (vision light rings) on
+     */
     public void setLightOn() {
         pdh.setSwitchableChannel(true);
     }
