@@ -12,6 +12,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveKinematicsConstraint;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -183,6 +184,17 @@ public class RobotContainer {
         new POVButton(driver, 90).whenPressed(drivetrain::reset);
 
 
+        new JoystickButton(operator, OIConstants.kTriangle)
+            .whenPressed(
+                new SequentialCommandGroup(
+                    new VisionOn(vision),
+                    new WaitCommand(0.40),
+                    new VisionDrive(drivetrain, vision),
+                    new VisionOff(vision)
+                )
+            );
+
+
             // TODO Change close to 3500
 
         // auto shot => 3650
@@ -192,7 +204,7 @@ public class RobotContainer {
 
         new POVButton(operator, 0).whenPressed(new ResetClimbSequence(climber));
 
-        new POVButton(operator, 180).whenPressed(new VisionOn(vision)).whenReleased(new VisionOff(vision));
+        // new POVButton(operator, 180).whenPressed(new VisionOn(vision)).whenReleased(new VisionOff(vision));
 
         new JoystickButton(operator, OIConstants.kShare)
             .whenPressed(new L2ClimbUp(climber));
