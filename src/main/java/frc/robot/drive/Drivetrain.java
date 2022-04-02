@@ -10,7 +10,9 @@ import edu.wpi.first.math.controller.*;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.trajectory.*;
+import edu.wpi.first.math.trajectory.constraint.DifferentialDriveKinematicsConstraint;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -70,12 +72,7 @@ public class Drivetrain extends SubsystemBase {
     rightFront.follow(rightMaster);
     rightRear.follow(rightMaster);
 
-    leftMaster.setNeutralMode(NeutralMode.Coast);
-    leftFront.setNeutralMode(NeutralMode.Coast);
-    leftRear.setNeutralMode(NeutralMode.Coast);
-    rightMaster.setNeutralMode(NeutralMode.Coast);
-    rightFront.setNeutralMode(NeutralMode.Coast);
-    rightRear.setNeutralMode(NeutralMode.Coast);
+    setCoast();
 
     currentLimitConfiguration = new SupplyCurrentLimitConfiguration(true, 40, 40, 0);
 
@@ -101,6 +98,24 @@ public class Drivetrain extends SubsystemBase {
     rightFF = new SimpleMotorFeedforward(0, 0, 0);
 
     putPF();
+  }
+
+  public void setCoast() {
+    leftMaster.setNeutralMode(NeutralMode.Coast);
+    leftFront.setNeutralMode(NeutralMode.Coast);
+    leftRear.setNeutralMode(NeutralMode.Coast);
+    rightMaster.setNeutralMode(NeutralMode.Coast);
+    rightFront.setNeutralMode(NeutralMode.Coast);
+    rightRear.setNeutralMode(NeutralMode.Coast);
+  }
+
+  public void setBrake() {
+    leftMaster.setNeutralMode(NeutralMode.Brake);
+    leftFront.setNeutralMode(NeutralMode.Brake);
+    leftRear.setNeutralMode(NeutralMode.Brake);
+    rightMaster.setNeutralMode(NeutralMode.Brake);
+    rightFront.setNeutralMode(NeutralMode.Brake);
+    rightRear.setNeutralMode(NeutralMode.Brake);
   }
 
   public void reset() {
@@ -364,9 +379,9 @@ public class Drivetrain extends SubsystemBase {
     // Create a voltage constraint to ensure we don't accelerate too fast
     var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
         new SimpleMotorFeedforward(
-            DriveConstants.ksVolts,
-            DriveConstants.kvVoltSecondsPerMeter,
-            DriveConstants.kaVoltSecondsSquaredPerMeter),
+            DriveConstants.kAutoS,
+            DriveConstants.kAutoV,
+            DriveConstants.kA),
         DriveConstants.kDriveKinematics,
         10
     );
@@ -407,5 +422,55 @@ public class Drivetrain extends SubsystemBase {
 
     // Run path following command, then stop at the end.
     return ramseteCommand.andThen(() -> this.tankDriveVolts(0, 0));
+  }
+
+  public RamseteCommand generateRamseteCommand(Trajectory trajectory) {
+    return new RamseteCommand(
+      trajectory, 
+      this::getPose, 
+      new RamseteController(), 
+      new SimpleMotorFeedforward(DriveConstants.kAutoS, DriveConstants.kAutoV, 0), 
+      DriveConstants.kDriveKinematics, 
+      this::getWheelSpeeds,
+      new PIDController(DriveConstants.kAutoP, 0, 0), 
+      new PIDController(DriveConstants.kAutoP, 0, 0), 
+      this::tankDriveVolts, 
+      this);
+  }
+
+  public RamseteCommand generateFasterAccelRamseteCommand(Trajectory trajectory) {
+    return new RamseteCommand(
+      trajectory, 
+      this::getPose, 
+      new RamseteController(), 
+      new SimpleMotorFeedforward(DriveConstants.kAutoS, DriveConstants.kAutoV, 0), 
+      DriveConstants.kDriveKinematics, 
+      this::getWheelSpeeds,
+      new PIDController(DriveConstants.kAutoP, 0, 0), 
+      new PIDController(DriveConstants.kAutoP, 0, 0), 
+      this::tankDriveVolts, 
+      this);
+  }
+
+  public TrajectoryConfig getTrajectoryConfiguration() {
+    TrajectoryConfig config = new TrajectoryConfig(
+      DriveConstants.kMaxAutoSpeedFPS,
+      DriveConstants.kMaxAutoAccelerationFPS2
+    );
+    config.addConstraint(
+      new DifferentialDriveKinematicsConstraint(DriveConstants.kDriveKinematics, 5)
+    );
+    return config;
+  }
+
+  public TrajectoryConfig getFasterAccelTrajectoryConfiguration() {
+    TrajectoryConfig config = new TrajectoryConfig(
+      DriveConstants.kMaxAutoSpeedFPS,
+      DriveConstants.kMaxAutoAccelerationFPS2 + 1
+    );
+    config.addConstraint(
+      new DifferentialDriveKinematicsConstraint(DriveConstants.kDriveKinematics, 5)
+    );
+    return config;
   }
 }

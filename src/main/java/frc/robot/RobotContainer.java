@@ -8,9 +8,11 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveKinematicsConstraint;
+import edu.wpi.first.vision.VisionRunner;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj.Compressor;
@@ -29,7 +31,14 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.auto.AutoSelectorSwitch;
+import frc.robot.auto.commands.AlternateTwoCargoAuto;
+import frc.robot.auto.commands.FourCargoAuto;
+import frc.robot.auto.commands.ShortTwoCargoAuto;
 import frc.robot.auto.commands.TimedAutoSequence;
+import frc.robot.auto.commands.TimedDrive;
+import frc.robot.auto.commands.TwoCargoAuto;
 import frc.robot.climber.Climber;
 import frc.robot.climber.commands.*;
 import frc.robot.drive.Drivetrain;
@@ -49,6 +58,7 @@ import frc.robot.vision.VisionSystem;
 import frc.robot.vision.commands.*;
 
 public class RobotContainer {
+    AutoSelectorSwitch autoSwitch;
     Drivetrain drivetrain;
     Shooter shooter;
     Intake intake;
@@ -59,8 +69,15 @@ public class RobotContainer {
     VisionSystem vision;
     Joystick driver, operator;
 
+    CommandBase autoCommand;
+
+    private ShortTwoCargoAuto shortAuto;
+    private AlternateTwoCargoAuto altAuto;
+    private FourCargoAuto four;
+
     public RobotContainer() {
         // initialize subsystems
+        autoSwitch = new AutoSelectorSwitch();
         drivetrain = new Drivetrain();
         shooter = new Shooter();
         intake = new Intake();
@@ -78,42 +95,24 @@ public class RobotContainer {
         intake.setDefaultCommand(new IntakeCommand(intake, indexer, operator));
         indexer.setDefaultCommand(new IntakeIndexCommand(intake, indexer));
 
-        
+        shortAuto = new ShortTwoCargoAuto(drivetrain, intake, indexer, shooter);
+        altAuto = new AlternateTwoCargoAuto(drivetrain, intake, indexer, shooter);
+        four = new FourCargoAuto(drivetrain, intake, indexer, shooter);
     }
 
     public CommandBase getAuto() {
-        drivetrain.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
-        Pose2d start = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
-        Pose2d end = new Pose2d(10, 0, Rotation2d.fromDegrees(45));
-
-        var interiorWaypoints = new ArrayList<Translation2d>();
-        // interiorWaypoints.add(new Translation2d(Units.feetToMeters(14.54), Units.feetToMeters(23.23)));
-        // interiorWaypoints.add(new Translation2d(Units.feetToMeters(21.04), Units.feetToMeters(18.23)));
-
-        TrajectoryConfig config = new TrajectoryConfig(6.5, 4);
-        config.addConstraint(new DifferentialDriveKinematicsConstraint(DriveConstants.kDriveKinematics, 5));
-
-        var trajectory = TrajectoryGenerator.generateTrajectory(
-            start,
-            interiorWaypoints,
-            end,
-            config);
-
-        final double kP = 0.31;
-
-        return new RamseteCommand(
-            trajectory, 
-            drivetrain::getPose, 
-            new RamseteController(), 
-            new SimpleMotorFeedforward(0.5, 1.388, 0), 
-            DriveConstants.kDriveKinematics, 
-            drivetrain::getWheelSpeeds,
-            new PIDController(kP, 0, 0), 
-            new PIDController(kP, 0, 0), 
-            drivetrain::tankDriveVolts, 
-            drivetrain);
-        // return new TimedAutoSequence(drivetrain, intake, indexer, shooter);
-        // return new DrivetrainCharacterization(drivetrain);
+        if (autoSwitch.doTwoCargoLayup()) {
+            autoCommand = shortAuto;
+        } else if (autoSwitch.doAltTwoCargo()) {
+            autoCommand = altAuto;
+        } else if (autoSwitch.doFourCargo()) {
+            autoCommand = four;
+        } else {
+            autoCommand = new TimedDrive(drivetrain, 3, 0.6);
+        }
+        return autoCommand;
+        // return new AlternateTwoCargoAuto(drivetrain, intake, indexer, shooter);
+        // return new ShortTwoCargoAuto(drivetrain, intake, indexer, shooter);
     }
 
     public void initRobotCommands() {
@@ -127,15 +126,20 @@ public class RobotContainer {
 
     public void autoInit() {
         drivetrain.reset();
+        drivetrain.resetOdometry(new Pose2d());
         if (vision.isVisionClientHavingProblems()) vision.initClient();
     }
 
     public void teleopInit() {
+        drivetrain.resetOdometry(new Pose2d());
         if (vision.isVisionClientHavingProblems()) vision.initClient();
     }
 
     public void periodic() {
-
+        boolean[] rawAutoResult = autoSwitch.getRaw();
+        for (int i = 0; i < rawAutoResult.length; i++) {
+            SmartDashboard.putBoolean("auto switch value " + (i + 1), rawAutoResult[i]);
+        }
     }
     
     public void configureButtonBindings() {
@@ -145,54 +149,44 @@ public class RobotContainer {
         new JoystickButton(driver, OIConstants.kSquare)
             .whenPressed(new HighGear(drivetrain))
             .whenReleased(new LowGear(drivetrain));
-
+            
         new JoystickButton(driver, OIConstants.kX)
+            .whenPressed(new VisionDriveSequence(drivetrain, vision))
+            .whenReleased(new VisionOff(vision)); // making sure vision light is off
+
+        new JoystickButton(driver, OIConstants.kTriangle)
             .whenPressed(new SlowDrive(drivetrain))
             .whenReleased(new RegularDrive(drivetrain));
 
-        // new JoystickButton(operator, OIConstants.kTriangle) // throws IllegalArgumentException
-        //     .whenPressed(new VisionShootSequence(shooter, vision))
-        //     .whenHeld(new ShootIndexCommand(indexer, shooter))
-        //     .whenReleased(new StopShooter(shooter));
-
-        // new JoystickButton(operator, OIConstants.kSquare)
-        //     .whenPressed(new SpinUpShooter(shooter, 3500, true))
-        //     .whenHeld(new ShootIndexCommand(indexer, shooter))
-        //     .whenReleased(new StopShooter(shooter));
-
-        // new JoystickButton(operator, OIConstants.kCircle)
-        //     .whenPressed(new SpinUpShooter(shooter, 4000, false)) //was 4300
-        //     .whenHeld(new ShootIndexCommand(indexer, shooter))
-        //     .whenReleased(new StopShooter(shooter));
-
-        new JoystickButton(operator, OIConstants.kX)
-            .whileHeld(
-                new ParallelCommandGroup(
-                    new SmartDashShooter(shooter, false),
-                    new ShootIndexCommand(indexer, shooter)
-                )
-            ).whenReleased(new StopShooter(shooter));
+        new JoystickButton(operator, OIConstants.kSquare)
+            .whenPressed(new SpinUpShooter(shooter, ShooterConstants.kCloseShotRPM, ShooterConstants.kCloseShotHoodExtended))
+            .whenHeld(new ShootIndexCommand(indexer, shooter))
+            .whenReleased(new StopShooter(shooter));
 
         new JoystickButton(operator, OIConstants.kCircle)
-            .whileHeld(
-                new ParallelCommandGroup(
-                    new SmartDashShooter(shooter, true),
-                    new ShootIndexCommand(indexer, shooter)
-                )
-            ).whenReleased(new StopShooter(shooter));
+            .whenPressed(new SpinUpShooter(shooter, 4000, false)) //was 4300
+            .whenHeld(new ShootIndexCommand(indexer, shooter))
+            .whenReleased(new StopShooter(shooter));
 
-        new POVButton(driver, 90).whenPressed(drivetrain::reset);
+        // new JoystickButton(operator, OIConstants.kX)
+        //     .whileHeld(
+        //         new ParallelCommandGroup(
+        //             new SmartDashShooter(shooter, false),
+        //             new ShootIndexCommand(indexer, shooter)
+        //         )
+        //     ).whenReleased(new StopShooter(shooter));
 
+        // new JoystickButton(operator, OIConstants.kCircle)
+        //     .whileHeld(
+        //         new ParallelCommandGroup(
+        //             new SmartDashShooter(shooter, true),
+        //             new ShootIndexCommand(indexer, shooter)
+        //         )
+        //     ).whenReleased(new StopShooter(shooter));
 
         new JoystickButton(operator, OIConstants.kTriangle)
-            .whenPressed(
-                new SequentialCommandGroup(
-                    new VisionOn(vision),
-                    new WaitCommand(0.40),
-                    new VisionDrive(drivetrain, vision),
-                    new VisionOff(vision)
-                )
-            );
+            .whileHeld(new VisionShootSequence(drivetrain, indexer, shooter, vision))
+            .whenReleased(new VisionOff(vision)); // making sure vision light ring is off
 
 
             // TODO Change close to 3500

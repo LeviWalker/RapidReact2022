@@ -43,15 +43,17 @@ public class Constants {
         // public static final double kTrackWidthMeters = 2.5;
         public static final double kTrackwidth = 22.75 / 12;
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidth);
+        public static final double kMaxAutoSpeedFPS = 6.5;
+        public static final double kMaxAutoAccelerationFPS2 = 4;
         public static final double kMaxSpeedMetersPerSecond = 0; // TODO math // jvn
         public static final double kMaxAccelerationMetersPerSecondSquared = 0; // TODO math // jvn
     
-        public static final double ksVolts = 0; // TODO sys id
-        public static final double kvVoltSecondsPerMeter = 0; // TODO sys id
-        public static final double kaVoltSecondsSquaredPerMeter = 0; // TODO sys id
+        public static final double kAutoS = 0.7; // TODO sys id
+        public static final double kAutoV = 1.388; // TODO sys id
+        public static final double kA = 0; // TODO sys id
         public static final double kRamseteB = 2;
         public static final double kRamseteZeta = 0.7;
-        public static final double kPDriveVel = 0; // TODO sys id
+        public static final double kAutoP = 0.31;
     }
     
     public static final class OIConstants {
@@ -134,6 +136,9 @@ public class Constants {
 
         public static final boolean kAutoShotHoodExtended = true;
 		public static final double kAutoShotRPM = 3650;
+
+        public static final boolean kCloseShotHoodExtended = true;
+		public static final double kCloseShotRPM = 3500;
 
         public static final boolean kSafeZoneHoodExtended = true;
 		public static final double kSafeZoneRPM = 4300;

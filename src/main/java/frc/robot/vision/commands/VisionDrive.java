@@ -1,13 +1,10 @@
 package frc.robot.vision.commands;
 
-import com.fasterxml.jackson.databind.ser.std.AsArraySerializerBase;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.drive.Drivetrain;
-import frc.robot.shooter.commands.SmartDashShooter;
 import frc.robot.vision.VisionSystem;
 
 public class VisionDrive extends CommandBase {
@@ -38,6 +35,9 @@ public class VisionDrive extends CommandBase {
 
     @Override
     public void initialize() {
+
+        drivetrain.setBrake();
+
         count = 0;
         double p = SmartDashboard.getNumber("vision p", this.controller.getP());
         double i = SmartDashboard.getNumber("vision i", this.controller.getI());
@@ -63,18 +63,25 @@ public class VisionDrive extends CommandBase {
         drivetrain.tankDriveVolts(output, -output);
         SmartDashboard.putNumber("drive output", output);
 
-        if (Math.abs(vision.getAngle() - targetAngle) < 0.3) count++;
-        else count = 0;
+        if (Math.abs(vision.getAngle() - targetAngle) < 0.3) {
+            count++;
+            output = 0;
+        } else  {
+            count = 0;
+        }
+
+        drivetrain.tankDriveVolts(output, -output);
     }
 
     @Override
     public void end(boolean interrupted) {
+        drivetrain.setCoast();
         drivetrain.tankDriveVolts(0, 0);
     }
 
     @Override
     public boolean isFinished() {
-        return count > 10;
+        return count > 5;
     }
 
 }

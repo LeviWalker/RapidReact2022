@@ -6,6 +6,20 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch TrajectoryCenter",
+      "request": "launch",
+      "mainClass": "frc.robot.auto.TrajectoryCenter",
+      "projectName": "FalconTest2022"
+    },
+    {
+      "type": "java",
+      "name": "Launch AutoTrajectoryCenter",
+      "request": "launch",
+      "mainClass": "frc.robot.auto.AutoTrajectoryCenter",
+      "projectName": "FalconTest2022"
+    },
+    {
+      "type": "java",
       "name": "Launch DoubleInterpolater",
       "request": "launch",
       "mainClass": "frc.robot.util.math.DoubleInterpolater",
