@@ -75,8 +75,8 @@ public class TrajectoryCenter {
     
     public static TrajectoryConfig getFasterAccelTrajectoryConfiguration() {
         TrajectoryConfig config = new TrajectoryConfig(
-          DriveConstants.kMaxAutoSpeedFPS,
-          DriveConstants.kMaxAutoAccelerationFPS2 + 1
+          10,
+          9
         );
         config.addConstraint(
           new DifferentialDriveKinematicsConstraint(DriveConstants.kDriveKinematics, 5)

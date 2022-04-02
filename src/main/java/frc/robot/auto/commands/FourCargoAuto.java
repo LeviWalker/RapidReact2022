@@ -50,11 +50,11 @@ public class FourCargoAuto extends SequentialCommandGroup {
             atThirdCargo, // backup for the fourth
             config);
         
-        Trajectory getFouthCargo = TrajectoryGenerator.generateTrajectory(
-            atThirdCargo, // start at third cargo
-            noMiddleWaypoints,
-            atFourthCargo, // backup for the fourth
-            reverseConfig);
+        // Trajectory getFourthCargo = TrajectoryGenerator.generateTrajectory(
+        //     atThirdCargo, // start at third cargo
+        //     noMiddleWaypoints,
+        //     atFourthCargo, // backup for the fourth
+        //     reverseConfig);
 
         Trajectory goShootThirdAndFourthCargo = TrajectoryGenerator.generateTrajectory(
             atThirdCargo, // start at fourth cargo
@@ -78,9 +78,9 @@ public class FourCargoAuto extends SequentialCommandGroup {
                 new RunIntake(intake)
             ),
             new ParallelDeadlineGroup(new AutoIndex(indexer), new RunIntake(intake)),
-            new ParallelDeadlineGroup(
-                drivetrain.generateRamseteCommand(getFouthCargo),
-                new RunIntake(intake)),
+            // new ParallelDeadlineGroup(
+            //     drivetrain.generateRamseteCommand(getFourthCargo),
+            //     new RunIntake(intake)),
             new RunIntake(intake).withTimeout(0.25),
             new RetractIntake(intake),
             new ParallelDeadlineGroup(

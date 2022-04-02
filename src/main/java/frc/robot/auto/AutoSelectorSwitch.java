@@ -18,6 +18,14 @@ public class AutoSelectorSwitch extends SubsystemBase {
         return result;
     }
 
+    public int getPosition() {
+        if (!one.get()) return 1;
+        else if (!two.get()) return 2;
+        else if (!three.get()) return 3;
+        else if (!four.get()) return 4;
+        else return 0;
+    }
+
     public boolean doFourCargo() {
         return !three.get();
     }
@@ -25,7 +33,7 @@ public class AutoSelectorSwitch extends SubsystemBase {
     public boolean doAltTwoCargo() {
         return !two.get();
     }
-    
+
     public boolean doTwoCargoLayup() {
         return !one.get();
     }

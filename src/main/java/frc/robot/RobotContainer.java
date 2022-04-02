@@ -73,7 +73,9 @@ public class RobotContainer {
 
     private ShortTwoCargoAuto shortAuto;
     private AlternateTwoCargoAuto altAuto;
-    private FourCargoAuto four;
+    private FourCargoAuto fourAuto;
+
+    private int switchPosition;
 
     public RobotContainer() {
         // initialize subsystems
@@ -97,22 +99,20 @@ public class RobotContainer {
 
         shortAuto = new ShortTwoCargoAuto(drivetrain, intake, indexer, shooter);
         altAuto = new AlternateTwoCargoAuto(drivetrain, intake, indexer, shooter);
-        four = new FourCargoAuto(drivetrain, intake, indexer, shooter);
+        fourAuto = new FourCargoAuto(drivetrain, intake, indexer, shooter);
     }
 
     public CommandBase getAuto() {
-        if (autoSwitch.doTwoCargoLayup()) {
+        if (switchPosition == 1) {
             autoCommand = shortAuto;
-        } else if (autoSwitch.doAltTwoCargo()) {
+        } else if (switchPosition == 2) {
             autoCommand = altAuto;
-        } else if (autoSwitch.doFourCargo()) {
-            autoCommand = four;
+        } else if (switchPosition == 3) {
+            autoCommand = fourAuto;
         } else {
             autoCommand = new TimedDrive(drivetrain, 3, 0.6);
         }
         return autoCommand;
-        // return new AlternateTwoCargoAuto(drivetrain, intake, indexer, shooter);
-        // return new ShortTwoCargoAuto(drivetrain, intake, indexer, shooter);
     }
 
     public void initRobotCommands() {
@@ -140,6 +140,10 @@ public class RobotContainer {
         for (int i = 0; i < rawAutoResult.length; i++) {
             SmartDashboard.putBoolean("auto switch value " + (i + 1), rawAutoResult[i]);
         }
+    }
+
+    public void disabledPeriodic() {
+        switchPosition = autoSwitch.getPosition();
     }
     
     public void configureButtonBindings() {
