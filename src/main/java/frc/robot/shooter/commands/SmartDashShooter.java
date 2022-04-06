@@ -11,8 +11,8 @@ public class SmartDashShooter extends CommandBase {
     public SmartDashShooter(Shooter shooter, boolean hood) {
         this.shooter = shooter;
         this.hoodExtended = hood;
-        SmartDashboard.putNumber("RPM", shooter.getFlywheelRPM());
-        SmartDashboard.putBoolean("Hood Extended", shooter.getHoodExtended());
+        // SmartDashboard.putNumber("RPM", shooter.getFlywheelRPM());
+        // SmartDashboard.putBoolean("Hood Extended", shooter.getHoodExtended());
         addRequirements(shooter);
     }
 
@@ -24,13 +24,13 @@ public class SmartDashShooter extends CommandBase {
 
     @Override
     public void execute() {
-        double newRPM = SmartDashboard.getNumber("RPM", shooter.getFlywheelRPM());
-        boolean newHoodExtended = SmartDashboard.putBoolean("Hood Extended", false);
+        // double newRPM = SmartDashboard.getNumber("RPM", shooter.getFlywheelRPM());
+        // boolean newHoodExtended = SmartDashboard.putBoolean("Hood Extended", false);
 
-        if (rpm != newRPM) {
-            shooter.setFlywheelRPM(newRPM);
-            this.rpm = newRPM;
-        }
+        // if (rpm != newRPM) {
+        //     shooter.setFlywheelRPM(newRPM);
+        //     this.rpm = newRPM;
+        // }
 
         // if (hoodExtended != newHoodExtended) {
         //     shooter.setHoodExtended(newHoodExtended);
@@ -39,7 +39,7 @@ public class SmartDashShooter extends CommandBase {
 
         // shooter.setHoodExtended(newHoodExtended);
 
-        SmartDashboard.putNumber("Measured RPM", shooter.getFlywheelRPM());
+        // SmartDashboard.putNumber("Measured RPM", shooter.getFlywheelRPM());
     }
 
     @Override

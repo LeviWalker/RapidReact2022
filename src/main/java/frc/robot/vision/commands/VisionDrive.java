@@ -28,9 +28,9 @@ public class VisionDrive extends CommandBase {
         controller = new PIDController(p, i, d);
         controller.setSetpoint(targetAngle);
 
-        SmartDashboard.putNumber("vision p", p);
-        SmartDashboard.putNumber("vision i", i);
-        SmartDashboard.putNumber("vision d", d);
+        // SmartDashboard.putNumber("vision p", p);
+        // SmartDashboard.putNumber("vision i", i);
+        // SmartDashboard.putNumber("vision d", d);
     }
 
     @Override
@@ -39,20 +39,20 @@ public class VisionDrive extends CommandBase {
         drivetrain.setBrake();
 
         count = 0;
-        double p = SmartDashboard.getNumber("vision p", this.controller.getP());
-        double i = SmartDashboard.getNumber("vision i", this.controller.getI());
-        double d = SmartDashboard.getNumber("vision d", this.controller.getD());
+        // double p = SmartDashboard.getNumber("vision p", this.controller.getP());
+        // double i = SmartDashboard.getNumber("vision i", this.controller.getI());
+        // double d = SmartDashboard.getNumber("vision d", this.controller.getD());
 
-        if (p != this.controller.getP()) this.controller.setP(p);
-        if (i != this.controller.getI()) this.controller.setI(i);
-        if (d != this.controller.getD()) this.controller.setD(d);
+        // if (p != this.controller.getP()) this.controller.setP(p);
+        // if (i != this.controller.getI()) this.controller.setI(i);
+        // if (d != this.controller.getD()) this.controller.setD(d);
 
         controller.reset();
         controller.setSetpoint(targetAngle);
 
-        SmartDashboard.putNumber("vision p", p);
-        SmartDashboard.putNumber("vision i", i);
-        SmartDashboard.putNumber("vision d", d);
+        // SmartDashboard.putNumber("vision p", p);
+        // SmartDashboard.putNumber("vision i", i);
+        // SmartDashboard.putNumber("vision d", d);
     }
 
 
@@ -61,7 +61,7 @@ public class VisionDrive extends CommandBase {
         double output = -MathUtil.clamp(controller.calculate(vision.getAngle()), -(maxTurnVolage - minTurnVoltage), maxTurnVolage - minTurnVoltage);
         output += (Math.signum(vision.getAngle() - targetAngle) * minTurnVoltage);
         drivetrain.tankDriveVolts(output, -output);
-        SmartDashboard.putNumber("drive output", output);
+        // SmartDashboard.putNumber("drive output", output);
 
         if (Math.abs(vision.getAngle() - targetAngle) < 0.3) {
             count++;

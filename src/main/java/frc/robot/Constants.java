@@ -180,7 +180,7 @@ public class Constants {
     public static class VisionConstants {
 
         // Vision Client information
-        public static final short kVisionPort = 5957;
+        public static final short kVisionPort = 5800;
         public static final String kVisionIPAddress = "wpilibpi"; // "10.1.22.53";
 
         // Data value indexes

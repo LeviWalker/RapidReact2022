@@ -1,7 +1,6 @@
 package frc.robot.vision;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
@@ -32,8 +31,6 @@ public class VisionSystem extends SubsystemBase {
         try {
             client = new VisionClient(VisionConstants.kVisionIPAddress, VisionConstants.kVisionPort);
             client.start(); // start vision client thread
-            Shuffleboard.getTab("Vision").addNumber("Distance", client::getDistance);
-            Shuffleboard.getTab("Vision").addNumber("Angle", client::getAngle);
         } catch (VisionClientException e) {
             e.printStackTrace();
         }
@@ -119,5 +116,15 @@ public class VisionSystem extends SubsystemBase {
         //     SmartDashboard.putNumber("Vision Distance", getDistance());
         //     SmartDashboard.putNumber("Vision Angle", getAngle());
         // }
+
+        boolean connected = client != null;
+        SmartDashboard.putBoolean("Is vision connected?", connected);
+        if (connected) {
+            SmartDashboard.putNumber("Vision Distance", client.getDistance());
+            SmartDashboard.putNumber("Vision Angle", client.getAngle());
+        } else {
+            SmartDashboard.putNumber("Vision Distance", 0);
+            SmartDashboard.putNumber("Vision Angle", 0);
+        }
     }
 }

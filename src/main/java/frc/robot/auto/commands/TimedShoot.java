@@ -42,8 +42,8 @@ public class TimedShoot extends WaitCommand {
         this.shooter.setFlywheelRPM(this.rpm);
         this.shooter.setHoodExtended(this.hood);
 
-        SmartDashboard.putBoolean("timed shoot hood", this.hood);
-        SmartDashboard.putNumber("timed shoot rpm", this.rpm);
+        // SmartDashboard.putBoolean("timed shoot hood", this.hood);
+        // SmartDashboard.putNumber("timed shoot rpm", this.rpm);
     }
 
     @Override

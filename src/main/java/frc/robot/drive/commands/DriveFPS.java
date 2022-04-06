@@ -8,7 +8,7 @@ public class DriveFPS extends CommandBase {
     private Drivetrain drivetrain;
     public DriveFPS(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
-        SmartDashboard.putNumber("drive fps", 0);
+        // SmartDashboard.putNumber("drive fps", 0);
     }
 
     @Override

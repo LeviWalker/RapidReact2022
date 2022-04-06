@@ -152,25 +152,25 @@ public class Drivetrain extends SubsystemBase {
     // Update the odometry in the periodic block
     updateOdometry();
 
-    SmartDashboard.putNumber("left feet", getLeftEncoderDistanceFeet());
-    SmartDashboard.putNumber("right feet", getRightEncoderDistanceFeet());
+    // SmartDashboard.putNumber("left feet", getLeftEncoderDistanceFeet());
+    // SmartDashboard.putNumber("right feet", getRightEncoderDistanceFeet());
 
-    SmartDashboard.putNumber("left fps", getLeftEncoderVelocityFeetPerSecond());
-    SmartDashboard.putNumber("right fps", getRightEncoderVelocityFeetPerSecond());
+    // SmartDashboard.putNumber("left fps", getLeftEncoderVelocityFeetPerSecond());
+    // SmartDashboard.putNumber("right fps", getRightEncoderVelocityFeetPerSecond());
 
-    double p = SmartDashboard.getNumber("drive p", kP);
-    if (p != kP) {
-      kP = p;
-      leftMaster.setP(0, p);
-    }
+    // double p = SmartDashboard.getNumber("drive p", kP);
+    // if (p != kP) {
+    //   kP = p;
+    //   leftMaster.setP(0, p);
+    // }
 
-    double f = SmartDashboard.getNumber("drive f", kF);
-    if (f != kF) {
-      kF = f;
-      leftMaster.setF(0, f);
-    }
+    // double f = SmartDashboard.getNumber("drive f", kF);
+    // if (f != kF) {
+    //   kF = f;
+    //   leftMaster.setF(0, f);
+    // }
 
-    putPF();
+    // putPF();
   }
 
   private void putPF() {

@@ -24,15 +24,15 @@ public class VisionTurnToAngle extends CommandBase {
     @Override
     public void initialize() {
         controller.reset();
-        double newP = SmartDashboard.getNumber("angle p", controller.getP());
-        double newI = SmartDashboard.getNumber("angle i", controller.getI());
-        double newD = SmartDashboard.getNumber("angle d", controller.getD());
+        // double newP = SmartDashboard.getNumber("angle p", controller.getP());
+        // double newI = SmartDashboard.getNumber("angle i", controller.getI());
+        // double newD = SmartDashboard.getNumber("angle d", controller.getD());
 
-        if (newP != controller.getP()) controller.setP(newP);
-        if (newI != controller.getI()) controller.setI(newI);
-        if (newD != controller.getD()) controller.setD(newD);
+        // if (newP != controller.getP()) controller.setP(newP);
+        // if (newI != controller.getI()) controller.setI(newI);
+        // if (newD != controller.getD()) controller.setD(newD);
         
-        targetAngle = SmartDashboard.getNumber("target angle", 0);
+        // targetAngle = SmartDashboard.getNumber("target angle", 0);
         // targetAngle = vision.getAngle();
         drivetrain.getIMU().reset();
     }

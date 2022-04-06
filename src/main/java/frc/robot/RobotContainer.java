@@ -1,53 +1,21 @@
 package frc.robot;
 
-import java.util.ArrayList;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.constraint.DifferentialDriveKinematicsConstraint;
-import edu.wpi.first.vision.VisionRunner;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.auto.AutoSelectorSwitch;
-import frc.robot.auto.commands.AlternateTwoCargoAuto;
-import frc.robot.auto.commands.FourCargoAuto;
-import frc.robot.auto.commands.ShortTwoCargoAuto;
-import frc.robot.auto.commands.TimedAutoSequence;
-import frc.robot.auto.commands.TimedDrive;
-import frc.robot.auto.commands.TwoCargoAuto;
+import frc.robot.auto.commands.*;
 import frc.robot.climber.Climber;
 import frc.robot.climber.commands.*;
 import frc.robot.drive.Drivetrain;
-import frc.robot.drive.commands.DrivetrainCharacterization;
-import frc.robot.drive.commands.HighGear;
-import frc.robot.drive.commands.JoystickDrive;
-import frc.robot.drive.commands.LowGear;
-import frc.robot.drive.commands.RegularDrive;
-import frc.robot.drive.commands.SlowDrive;
+import frc.robot.drive.commands.*;
 import frc.robot.indexer.Indexer;
 import frc.robot.indexer.commands.*;
 import frc.robot.intake.Intake;
@@ -121,25 +89,18 @@ public class RobotContainer {
             new VisionOff(vision)
         );
         visionOffSeq.schedule();
-        Shuffleboard.getTab("Vision").addBoolean("is client good?", vision::isVisionClientOperational);
     }
 
     public void autoInit() {
         drivetrain.reset();
         drivetrain.resetOdometry(new Pose2d());
         if (vision.isVisionClientHavingProblems()) vision.initClient();
+        SmartDashboard.putNumber("Auto Switch Position", switchPosition);
     }
 
     public void teleopInit() {
         drivetrain.resetOdometry(new Pose2d());
         if (vision.isVisionClientHavingProblems()) vision.initClient();
-    }
-
-    public void periodic() {
-        boolean[] rawAutoResult = autoSwitch.getRaw();
-        for (int i = 0; i < rawAutoResult.length; i++) {
-            SmartDashboard.putBoolean("auto switch value " + (i + 1), rawAutoResult[i]);
-        }
     }
 
     public void disabledPeriodic() {

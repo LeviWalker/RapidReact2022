@@ -9,9 +9,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   RobotContainer robotContainer;
 
-  String ip = "pi@wpilibpi";
-  short port = 5050;
-
   @Override
   public void robotInit() {
     CameraServer.startAutomaticCapture("Camera 0", 0);
@@ -24,7 +21,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    robotContainer.periodic();
   }
 
   @Override

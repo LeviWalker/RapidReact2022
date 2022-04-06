@@ -21,7 +21,7 @@ public class IntakeCommand extends CommandBase {
         this.indexer = indexer;
         this.operator = operator;
         addRequirements(intake);
-        SmartDashboard.putNumber("Intake Speed", intakeSpeed);
+        // SmartDashboard.putNumber("Intake Speed", intakeSpeed);
     }
 
     @Override
@@ -32,10 +32,10 @@ public class IntakeCommand extends CommandBase {
         else if (Math.abs(intakeAxis) < 0.30 && intake.isDeployed())
             intake.retract();
 
-        intakeSpeed = SmartDashboard.getNumber("Intake Speed", intakeSpeed);
+        // intakeSpeed = SmartDashboard.getNumber("Intake Speed", intakeSpeed);
 
-        if (Math.abs(intakeAxis) > 0.07) intake.setIntake(Math.signum(intakeAxis) * intakeSpeed);
-        else intake.setIntake(0);
+        // if (Math.abs(intakeAxis) > 0.07) intake.setIntake(Math.signum(intakeAxis) * intakeSpeed);
+        // else intake.setIntake(0);
 
         // if operator wants to intake, clamp input to min and max if we have the intake deployed
         // else just set to some slow speed
